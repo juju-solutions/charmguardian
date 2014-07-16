@@ -1,0 +1,25 @@
+{
+    "tests": {
+        "charm": {
+            "local": [
+                {
+                    "executable": [
+                        "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                    ], 
+                    "returncode": 0, 
+                    "duration": 0.233299, 
+                    "suite": "ghost", 
+                    "test": "charm-proof", 
+                    "output": "", 
+                    "dirname": "/tmp/tmp5FmguL/precise/ghost"
+                }
+            ]
+        }, 
+        "bundle": {}
+    }, 
+    "url": "lp:~charmers/charms/precise/ghost/trunk", 
+    "started": "2014-07-16 17:11:30.668633", 
+    "finished": "2014-07-16 17:12:16.382834", 
+    "result": "pass", 
+    "revision": null
+}

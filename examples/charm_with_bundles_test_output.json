@@ -1,0 +1,278 @@
+{
+    "tests": {
+        "charm": {
+            "local": [
+                {
+                    "executable": [
+                        "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                    ], 
+                    "returncode": 0, 
+                    "duration": 0.260862, 
+                    "suite": "charmworld", 
+                    "test": "charm-proof", 
+                    "output": "", 
+                    "dirname": "/tmp/tmp6kpjUr/precise/charmworld"
+                }
+            ]
+        }, 
+        "bundle": {
+            "~bac/charmworld-demo/4/charmworld-minimal": {
+                "tests": {
+                    "charmworld-minimal": {
+                        "local": [
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.300617, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (mongodb) must match directory name (cs_precise_mongodb-21) exactly for local deployment.\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/10-unit.test"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.124602, 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "10-unit.test", 
+                                "output": "test_success (test_write_log_rotate_config.TestWriteLogrotateConfigFile) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test"
+                                ], 
+                                "returncode": 127, 
+                                "duration": 8.524202, 
+                                "exit": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "100_configs.test", 
+                                "output": "Added charm \"cs:precise/mongodb-30\" to the environment.\n/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: 1: /home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: tests/get-unit-info: not found\nERROR write /dev/stdout: broken pipe\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.282868, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:~charming-devs/precise/elasticsearch-2", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (elasticsearch) must match directory name (cs_~charming-devs_precise_elasticsearch-2) exactly for local deployment.\nW: Metadata is missing categories.\nW: No icon.svg file.\nW: config.yaml: option secret-key does not have the keys: default\nW: config.yaml: option access-key does not have the keys: default\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_~charming-devs_precise_elasticsearch-2"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.278346, 
+                                "suite": "charmworld", 
+                                "test": "charm-proof", 
+                                "output": "", 
+                                "dirname": "precise/charmworld"
+                            }, 
+                            {
+                                "executable": [
+                                    "juju-deployer", 
+                                    "-c", 
+                                    "/tmp/tmp6kpjUr/bundle-charmworld-demoTzX3WF/bundles.yaml", 
+                                    "charmworld-minimal"
+                                ], 
+                                "returncode": 1, 
+                                "exit": "juju-deployer", 
+                                "suite": null, 
+                                "test": "juju-deployer", 
+                                "output": "2014-07-16 11:19:47 Starting deployment of charmworld-minimal\n2014-07-16 11:19:47 Deploying services...\n2014-07-16 11:19:48  Deploying service charmworld using local:precise/charmworld\n2014-07-16 11:19:53  Deploying service elasticsearch using cs:~charming-devs/precise/elasticsearch-2\nTraceback (most recent call last):\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/bin/juju-deployer\", line 9, in <module>\n    load_entry_point('juju-deployer==0.3.8', 'console_scripts', 'juju-deployer')()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 127, in main\n    run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 225, in run\n    importer.Importer(env, deployment, options).run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 195, in run\n    self.add_units()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 26, in add_units\n    cur_units = len(env_status['services'][svc.name].get('units', ()))\nKeyError: 'mongodb'\n"
+                            }
+                        ]
+                    }
+                }, 
+                "url": "lp:~bac/charms/bundles/charmworld-demo/bundle", 
+                "started": "2014-07-16 15:18:55.414128", 
+                "finished": "2014-07-16 15:20:31.623028", 
+                "result": "fail", 
+                "revision": null
+            }, 
+            "~bac/charmworld-local/5/charmworld-local": {
+                "tests": {
+                    "charmworld-local": {
+                        "local": [
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.30162, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (mongodb) must match directory name (cs_precise_mongodb-21) exactly for local deployment.\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/10-unit.test"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.110597, 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "10-unit.test", 
+                                "output": "test_success (test_write_log_rotate_config.TestWriteLogrotateConfigFile) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test"
+                                ], 
+                                "returncode": 127, 
+                                "duration": 8.628735, 
+                                "exit": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "100_configs.test", 
+                                "output": "Added charm \"cs:precise/mongodb-30\" to the environment.\n/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: 1: /home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: tests/get-unit-info: not found\nERROR write /dev/stdout: broken pipe\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.251872, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:~charming-devs/precise/elasticsearch-2", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (elasticsearch) must match directory name (cs_~charming-devs_precise_elasticsearch-2) exactly for local deployment.\nW: Metadata is missing categories.\nW: No icon.svg file.\nW: config.yaml: option secret-key does not have the keys: default\nW: config.yaml: option access-key does not have the keys: default\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_~charming-devs_precise_elasticsearch-2"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.2814, 
+                                "suite": "charmworld", 
+                                "test": "charm-proof", 
+                                "output": "", 
+                                "dirname": "precise/charmworld"
+                            }, 
+                            {
+                                "executable": [
+                                    "juju-deployer", 
+                                    "-c", 
+                                    "/tmp/tmp6kpjUr/bundle-charmworld-localYjYoUv/bundles.yaml", 
+                                    "charmworld-local"
+                                ], 
+                                "returncode": 1, 
+                                "exit": "juju-deployer", 
+                                "suite": null, 
+                                "test": "juju-deployer", 
+                                "output": "2014-07-16 11:21:22 Starting deployment of charmworld-local\n2014-07-16 11:21:23 Deploying services...\n2014-07-16 11:21:23  Deploying service charmworld using local:precise/charmworld\n2014-07-16 11:21:29  Deploying service elasticsearch using cs:~charming-devs/precise/elasticsearch-2\nTraceback (most recent call last):\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/bin/juju-deployer\", line 9, in <module>\n    load_entry_point('juju-deployer==0.3.8', 'console_scripts', 'juju-deployer')()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 127, in main\n    run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 225, in run\n    importer.Importer(env, deployment, options).run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 195, in run\n    self.add_units()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 26, in add_units\n    cur_units = len(env_status['services'][svc.name].get('units', ()))\nKeyError: 'mongodb'\n"
+                            }
+                        ]
+                    }
+                }, 
+                "url": "lp:~bac/charms/bundles/charmworld-local/bundle", 
+                "started": "2014-07-16 15:20:31.623703", 
+                "finished": "2014-07-16 15:22:04.632302", 
+                "result": "fail", 
+                "revision": null
+            }, 
+            "~bac/charmworld-demo/4/charmworld-production": {
+                "tests": {
+                    "charmworld-minimal": {
+                        "local": [
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.311864, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (mongodb) must match directory name (cs_precise_mongodb-21) exactly for local deployment.\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/10-unit.test"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.117888, 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "10-unit.test", 
+                                "output": "test_success (test_write_log_rotate_config.TestWriteLogrotateConfigFile) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test"
+                                ], 
+                                "returncode": 127, 
+                                "duration": 9.713777, 
+                                "exit": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test", 
+                                "suite": "cs:precise/mongodb-21", 
+                                "test": "100_configs.test", 
+                                "output": "Added charm \"cs:precise/mongodb-30\" to the environment.\n/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: 1: /home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests/100_configs.test: tests/get-unit-info: not found\nERROR write /dev/stdout: broken pipe\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_precise_mongodb-21/tests"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 100, 
+                                "duration": 0.283376, 
+                                "exit": "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof", 
+                                "suite": "cs:~charming-devs/precise/elasticsearch-2", 
+                                "test": "charm-proof", 
+                                "output": "W: metadata name (elasticsearch) must match directory name (cs_~charming-devs_precise_elasticsearch-2) exactly for local deployment.\nW: Metadata is missing categories.\nW: No icon.svg file.\nW: config.yaml: option secret-key does not have the keys: default\nW: config.yaml: option access-key does not have the keys: default\n", 
+                                "dirname": "/home/tvansteenburgh/.juju/.deployer-store-cache/cs_~charming-devs_precise_elasticsearch-2"
+                            }, 
+                            {
+                                "executable": [
+                                    "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                                ], 
+                                "returncode": 0, 
+                                "duration": 0.271355, 
+                                "suite": "charmworld", 
+                                "test": "charm-proof", 
+                                "output": "", 
+                                "dirname": "precise/charmworld"
+                            }, 
+                            {
+                                "executable": [
+                                    "juju-deployer", 
+                                    "-c", 
+                                    "/tmp/tmp6kpjUr/bundle-charmworld-demowsPZXv/bundles.yaml", 
+                                    "charmworld-minimal"
+                                ], 
+                                "returncode": 1, 
+                                "exit": "juju-deployer", 
+                                "suite": null, 
+                                "test": "juju-deployer", 
+                                "output": "2014-07-16 11:17:57 Starting deployment of charmworld-minimal\n2014-07-16 11:17:58 Deploying services...\n2014-07-16 11:17:59  Deploying service charmworld using local:precise/charmworld\n2014-07-16 11:18:04  Deploying service elasticsearch using cs:~charming-devs/precise/elasticsearch-2\nTraceback (most recent call last):\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/bin/juju-deployer\", line 9, in <module>\n    load_entry_point('juju-deployer==0.3.8', 'console_scripts', 'juju-deployer')()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 127, in main\n    run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/cli.py\", line 225, in run\n    importer.Importer(env, deployment, options).run()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 195, in run\n    self.add_units()\n  File \"/home/tvansteenburgh/src/charmguardian/.venv/local/lib/python2.7/site-packages/deployer/action/importer.py\", line 26, in add_units\n    cur_units = len(env_status['services'][svc.name].get('units', ()))\nKeyError: 'mongodb'\n"
+                            }
+                        ]
+                    }
+                }, 
+                "url": "lp:~bac/charms/bundles/charmworld-demo/bundle", 
+                "started": "2014-07-16 15:16:57.809208", 
+                "finished": "2014-07-16 15:18:55.413582", 
+                "result": "fail", 
+                "revision": null
+            }
+        }
+    }, 
+    "url": "lp:~juju-jitsu/charms/precise/charmworld/trunk", 
+    "started": "2014-07-16 15:16:14.069395", 
+    "finished": "2014-07-16 15:22:04.633143", 
+    "result": "fail", 
+    "revision": null
+}
