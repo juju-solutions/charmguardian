@@ -6,6 +6,10 @@ if ! dpkg -s python-virtualenv ; then
     sudo apt-get install -y python-virtualenv
 fi
 
+if ! dpkg -s python-dev ; then
+    sudo apt-get install -y python-dev
+fi
+
 if [ ! -d .venv ]; then
     virtualenv -p /usr/bin/python2.7 .venv
     . .venv/bin/activate
