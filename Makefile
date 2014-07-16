@@ -1,6 +1,6 @@
 PROJECT=charmguardian
 
-all: lint test
+all: .venv lint test
 
 clean:
 	rm -rf MANIFEST dist/* $(PROJECT).egg-inf .cover
@@ -10,11 +10,11 @@ clean:
 
 test: .venv
 	@echo Starting tests...
-	@.venv/bin/nosetests 
+	@.venv/bin/nosetests tests
 
 coverage: .venv
 	@echo Starting tests...
-	@.venv/bin/nosetests --with-coverage
+	@.venv/bin/nosetests tests --with-coverage
 
 lint:
 	@flake8 $(PROJECT) $(TESTS) && echo OK
