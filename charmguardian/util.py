@@ -23,7 +23,7 @@ def bundletester(dir_, env, deployment=None):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
     output, _ = p.communicate()
-    print(output)
+
     try:
         with open(result_file, 'r') as f:
             return json.load(f)
