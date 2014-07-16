@@ -10,11 +10,11 @@ clean:
 
 test: .venv
 	@echo Starting tests...
-	@.venv/bin/nosetests tests
+	@.venv/bin/nosetests $(PROJECT)/tests
 
 coverage: .venv
 	@echo Starting tests...
-	@.venv/bin/nosetests tests --with-coverage
+	@.venv/bin/nosetests $(PROJECT)/tests --with-coverage
 
 lint: .venv
 	@.venv/bin/flake8 $(PROJECT) $(TESTS) && echo OK
