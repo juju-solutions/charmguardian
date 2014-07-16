@@ -150,7 +150,7 @@ class CharmTester(Tester):
 
 
 TESTERS = [
-    #MergeProposalTester,
+    # MergeProposalTester,
     BundleTester,
     CharmTester,
 ]

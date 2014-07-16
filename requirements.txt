@@ -2,7 +2,7 @@ PyYAML==3.10
 argparse==1.2.1
 blessings==1.5.1
 bzr==2.6.0
-bzr+http://code.launchpad.net/~bcsaller/charmtester/bundletester#egg=bundletester
+bzr+http://code.launchpad.net/~tvansteenburgh/charmtester/bundletester-new-defaults#egg=bundletester
 charm-tools==1.3.2
 charmworldlib==0.4.1
 coverage==3.7.1

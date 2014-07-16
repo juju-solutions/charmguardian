@@ -17,12 +17,12 @@ class BzrFetcher(Fetcher):
         cmd = 'bzr branch --use-existing-dir {} {}'.format(self.url, dir_)
         args = shlex.split(cmd)
         subprocess.check_call(args)
-        #TODO checkout correct revision
+        # TODO checkout correct revision
 
 
 FETCHERS = [
     BzrFetcher,
-    #GitFetcher,
+    # GitFetcher,
 ]
 
 
