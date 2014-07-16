@@ -12,11 +12,14 @@ Activate the virtualenv: `source .venv/bin/activate`
 
 Test a charm:
 
-    charmguardian lp:~charmers/charms/precise/ghost/trunk > output.json
+    CHARM_TEST_ENVS=local,amazon charmguardian lp:~charmers/charms/precise/ghost/trunk > output.json
 
 Test a bundle:
 
-    charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle > output.json
+    BUNDLE_TEST_ENVS=local,amazon charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle > output.json
+
+If `CHARM_TEST_ENVS` or `BUNDLE_TEST_ENVS` are not set, the `local`
+environment is used for all tests.
 
 ## Output
 
@@ -24,7 +27,6 @@ See the `examples/` directory for sample output.
 
 ## Notes
 
-* Right now all testing is done using the local provider (see TODO)
 * When testing a charm, if the charm is included in any bundles, the
   tests for those bundles will be run also, using the version of the
   charm under test.
@@ -37,7 +39,6 @@ See the `examples/` directory for sample output.
 
 There's still a lot to be done:
 
-* Make testing environments configurable via environment vars.
 * Add merge proposal testing.
 * Add Fetchers for more url and repo types, e.g. http, git, etc
 * Add support for testing at specific revisions (other than just HEAD)

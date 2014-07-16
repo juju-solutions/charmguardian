@@ -1,0 +1,38 @@
+{
+    "tests": {
+        "charm": {
+            "amazon": [
+                {
+                    "executable": [
+                        "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                    ], 
+                    "returncode": 0, 
+                    "duration": 0.246524, 
+                    "suite": "ghost", 
+                    "test": "charm-proof", 
+                    "output": "", 
+                    "dirname": "/tmp/tmp3014Xk/precise/ghost"
+                }
+            ], 
+            "local": [
+                {
+                    "executable": [
+                        "/home/tvansteenburgh/src/charmguardian/.venv/bin/charm-proof"
+                    ], 
+                    "returncode": 0, 
+                    "duration": 0.261837, 
+                    "suite": "ghost", 
+                    "test": "charm-proof", 
+                    "output": "", 
+                    "dirname": "/tmp/tmp3014Xk/precise/ghost"
+                }
+            ]
+        }, 
+        "bundle": {}
+    }, 
+    "url": "lp:~charmers/charms/precise/ghost/trunk", 
+    "started": "2014-07-16 18:38:30.463069", 
+    "finished": "2014-07-16 18:45:15.948373", 
+    "result": "pass", 
+    "revision": null
+}

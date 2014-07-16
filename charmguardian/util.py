@@ -36,12 +36,17 @@ def bundletester(dir_, env, deployment=None):
         raise
 
 
+def get_envs(env_var):
+    envs = os.environ.get(env_var, 'local').split(',')
+    return [env.strip() for env in envs]
+
+
 def get_charm_test_envs():
-    return ['local']
+    return get_envs('CHARM_TEST_ENVS')
 
 
 def get_bundle_test_envs():
-    return ['local']
+    return get_envs('BUNDLE_TEST_ENVS')
 
 
 def timestamp():
