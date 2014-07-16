@@ -10,13 +10,13 @@ Clone repo and run `make` in the top-level directory.
 
 Activate the virtualenv: `source .venv/bin/activate`
 
-Test a charm::
+Test a charm:
 
     charmguardian lp:~charmers/charms/precise/ghost/trunk > output.json
 
-Test a bundle::
+Test a bundle:
 
-   charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle > output.json
+    charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle > output.json
 
 ## Output
 
