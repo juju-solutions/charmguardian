@@ -25,6 +25,9 @@ See the `examples/` directory for sample output.
 ## Notes
 
 * Right now all testing is done using the local provider (see TODO)
+* When testing a charm, if the charm is included in any bundles, the
+  tests for those bundles will be run also, using the version of the
+  charm under test.
 * When testing a bundle, if multiple deployments are included in the
   bundle file, one is selected randomly and tests are run against that
   deployment. This may change or be configurable in the future.
