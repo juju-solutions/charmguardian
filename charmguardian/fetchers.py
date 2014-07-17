@@ -1,5 +1,7 @@
 import logging
+import os
 import shlex
+import shutil
 import subprocess
 import tempfile
 
@@ -46,8 +48,40 @@ class BzrMergeProposalFetcher(Fetcher):
         return dir_
 
 
+class GithubFetcher(Fetcher):
+    @staticmethod
+    def can_fetch(url):
+        return url.startswith('gh:')
+
+    def fetch(self, dir_):
+        dir_ = tempfile.mkdtemp(dir=dir_)
+        url = 'https://github.com/' + self.url[len('gh:'):]
+        log.debug('Cloning %s to %s', url, dir_)
+        git('clone {} {}'.format(url, dir_))
+        # TODO checkout correct revision
+        return dir_
+
+
+class LocalFetcher(Fetcher):
+    @staticmethod
+    def can_fetch(url):
+        return url.startswith('local:')
+
+    def fetch(self, dir_):
+        src = os.path.expanduser(self.url[len('local:'):])
+        dst = os.path.join(dir_, os.path.basename(src.rstrip('/')))
+        shutil.copytree(src, dst)
+        return dst
+
+
 def bzr(cmd, **kw):
     cmd = 'bzr ' + cmd
+    args = shlex.split(cmd)
+    subprocess.check_call(args, **kw)
+
+
+def git(cmd, **kw):
+    cmd = 'git ' + cmd
     args = shlex.split(cmd)
     subprocess.check_call(args, **kw)
 
@@ -55,7 +89,8 @@ def bzr(cmd, **kw):
 FETCHERS = [
     BzrFetcher,
     BzrMergeProposalFetcher,
-    # GitFetcher,
+    GithubFetcher,
+    LocalFetcher,
 ]
 
 

@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+import shutil
 import tempfile
 import yaml
 
@@ -89,6 +90,12 @@ class CharmTester(Tester):
     def test(self):
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
+
+        # to avoid charm-proof warnings, dir name must match charm name
+        if os.path.basename(self.test_dir.rstrip('/')) != self.charm_name:
+            new_test_dir = os.path.join(self.test_dir, self.charm_name)
+            shutil.copytree(self.test_dir, new_test_dir)
+            self.test_dir = new_test_dir
 
         for env in get_charm_test_envs():
             log.debug('Testing Charm %s in env %s', self.charm_name, env)

@@ -1,3 +1,0 @@
-[console_scripts]
-charmguardian = charmguardian.cli:main
-
