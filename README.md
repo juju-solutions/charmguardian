@@ -18,6 +18,10 @@ Test a bundle:
 
     BUNDLE_TEST_ENVS=local,amazon charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle > output.json
 
+Test a merge proposal (target branch must contain a charm or bundle):
+
+    charmguardian lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
+
 If `CHARM_TEST_ENVS` or `BUNDLE_TEST_ENVS` are not set, the `local`
 environment is used for all tests.
 
@@ -39,7 +43,6 @@ See the `examples/` directory for sample output.
 
 There's still a lot to be done:
 
-* Add merge proposal testing.
 * Add Fetchers for more url and repo types, e.g. http, git, etc
 * Add support for testing at specific revisions (other than just HEAD)
 * Add tests

@@ -1,7 +1,6 @@
 import logging
 import os
 import random
-import re
 import tempfile
 import yaml
 
@@ -20,35 +19,19 @@ log = logging.getLogger(__name__)
 
 
 class Tester(object):
-    def __init__(self, url, revision, tempdir):
-        self.url = url
-        self.revision = revision
-        self.tempdir = tempdir
-        self.fetcher = get_fetcher(url, revision)
+    def __init__(self, test_dir):
+        self.test_dir = test_dir
 
 
 class BundleTester(Tester):
     @staticmethod
-    def can_test(url):
-        return '/charms/bundles/' in url
-
-    def __init__(self, url, revision, tempdir):
-        super(BundleTester, self).__init__(url, revision, tempdir)
-        self.bundle_name = self._parse_url(url)
-        self.bundledir = tempfile.mkdtemp(
-            prefix='bundle-{}'.format(self.bundle_name), dir=tempdir)
-
-    def _parse_url(self, url):
-        m = re.search(r'/charms/bundles/([\w-]+)', url)
-        return m.group(1)
+    def can_test(dir_):
+        return 'bundles.yaml' in os.listdir(dir_)
 
     def test(self, charm_name=None, charmdir=None):
-        start = timestamp()
         bundle_tests = {}
         result = 'pass'
 
-        log.debug('Cloning Bundle %s to %s', self.bundle_name, self.bundledir)
-        self.fetcher.fetch(self.bundledir)
         if charm_name and charmdir:
             self._swap_charm(charm_name, charmdir)
 
@@ -58,25 +41,22 @@ class BundleTester(Tester):
                 log.debug(
                     'Testing deployment %s in env %s', deployment, env)
                 deployment_tests[env] = bundletester(
-                    self.bundledir, env, deployment=deployment)
+                    self.test_dir, env, deployment=deployment)
                 if result == 'pass':
                     result = get_test_result(deployment_tests[env])
 
         return {
-            'url': self.url,
-            'revision': self.revision,
             'result': result,
-            'started': start,
-            'finished': timestamp(),
             'tests': bundle_tests,
         }
 
     def _swap_charm(self, charm_name, charmdir):
-        bundle_file = os.path.join(self.bundledir, 'bundles.yaml')
+        bundle_file = os.path.join(self.test_dir, 'bundles.yaml')
         with open(bundle_file, 'r') as f:
             bundle_data = yaml.load(f)
         for bundle in bundle_data.itervalues():
             for svc in bundle['services'].itervalues():
+                # TODO make this comparison more precise
                 if charm_name in svc['charm']:
                     svc['branch'] = charmdir
                     del svc['charm']
@@ -84,7 +64,7 @@ class BundleTester(Tester):
             f.write(yaml.dump(bundle_data, default_flow_style=False))
 
     def _choose_deployments(self):
-        bundle_file = os.path.join(self.bundledir, 'bundles.yaml')
+        bundle_file = os.path.join(self.test_dir, 'bundles.yaml')
         with open(bundle_file, 'r') as f:
             bundle_data = yaml.load(f)
             log.debug('Deployments: %s', bundle_data.keys())
@@ -93,47 +73,40 @@ class BundleTester(Tester):
 
 class CharmTester(Tester):
     @staticmethod
-    def can_test(url):
-        return '/charms/' in url
+    def can_test(dir_):
+        return 'metadata.yaml' in os.listdir(dir_)
 
-    def __init__(self, url, revision, tempdir):
-        super(CharmTester, self).__init__(url, revision, tempdir)
-        self.series, self.charm_name = self._parse_url(url)
-        self.charmdir = os.path.join(tempdir, self.series, self.charm_name)
-        os.makedirs(self.charmdir)
+    def __init__(self, test_dir):
+        super(CharmTester, self).__init__(test_dir)
+        self.charm_name = self._get_charm_name()
 
-    def _parse_url(self, url):
-        m = re.search(r'/charms/(\w+)/([\w-]+)', url)
-        return m.group(1), m.group(2)
+    def _get_charm_name(self):
+        metadata_file = os.path.join(self.test_dir, 'metadata.yaml')
+        with open(metadata_file, 'r') as f:
+            metadata = yaml.load(f)
+            return metadata['name']
 
     def test(self):
-        start = timestamp()
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
 
-        log.debug('Cloning Charm to %s', self.charmdir)
-        self.fetcher.fetch(self.charmdir)
         for env in get_charm_test_envs():
             log.debug('Testing Charm %s in env %s', self.charm_name, env)
-            charm_tests[env] = bundletester(self.charmdir, env)
+            charm_tests[env] = bundletester(self.test_dir, env)
             if result == 'pass':
                 result = get_test_result(charm_tests[env])
 
         for bundle in self.bundles():
-            bundle_tester = BundleTester(
-                'lp:' + bundle.branch_spec, None, self.tempdir)
-            bundle_tests[bundle.id] = bundle_tester.test(
-                charm_name=self.charm_name, charmdir=self.charmdir)
+            bundle_tests[bundle.id] = test(
+                bundle.branch_spec,
+                charm_name=self.charm_name,
+                charmdir=self.test_dir)
             if result == 'pass':
                 if bundle_tests[bundle.id]['result'] == 'fail':
                     result = 'fail'
 
         return {
-            'url': self.url,
-            'revision': self.revision,
             'result': result,
-            'started': start,
-            'finished': timestamp(),
             'tests': {
                 'charm': charm_tests,
                 'bundle': bundle_tests,
@@ -145,19 +118,36 @@ class CharmTester(Tester):
                    if self.charm_name in bundle.charms]
         log.debug(
             'Bundles that contain %s: %s', self.charm_name,
-            ', '.join([b.basket_name for b in bundles]))
+            ', '.join([b.basket_name for b in bundles]) if bundles else 'None')
         return bundles
 
 
 TESTERS = [
-    # MergeProposalTester,
     BundleTester,
     CharmTester,
 ]
 
 
-def get_tester(url, revision, tempdir):
+def get_tester(test_dir):
     for tester in TESTERS:
-        if tester.can_test(url):
-            return tester(url, revision, tempdir)
-    raise ValueError('No tester for url: %s' % url)
+        if tester.can_test(test_dir):
+            return tester(test_dir)
+    raise ValueError('No tester for dir: %s' % test_dir)
+
+
+def test(url, revision=None, **kw):
+    tempdir = tempfile.mkdtemp()
+    fetcher = get_fetcher(url, revision)
+    test_dir = fetcher.fetch(tempdir)
+    tester = get_tester(test_dir)
+
+    start = timestamp()
+    result = tester.test(**kw)
+    stop = timestamp()
+
+    result['url'] = url
+    result['revision'] = revision
+    result['started'] = start
+    result['finished'] = stop
+
+    return result

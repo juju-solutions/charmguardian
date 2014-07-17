@@ -1,20 +1,11 @@
 import argparse
 import json
 import logging
-import tempfile
 
-from .testers import get_tester
+from .testers import test
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-
-def test(url, revision):
-    tempdir = tempfile.mkdtemp()
-    tester = get_tester(url, revision, tempdir)
-    result = tester.test()
-    return result
 
 
 def get_parser():
