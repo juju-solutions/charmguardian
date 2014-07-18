@@ -23,6 +23,7 @@ URL.
 
 optional arguments:
   -h, --help  show this help message and exit
+  --debug     Increase output verbosity and skip cleanup of temp files.
 
 Use CHARM_TEST_ENVS and BUNDLE_TEST_ENVS to control which Juju
 environments

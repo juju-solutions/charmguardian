@@ -143,18 +143,23 @@ def get_tester(test_dir):
 
 
 def test(url, revision=None, **kw):
-    tempdir = tempfile.mkdtemp()
-    fetcher = get_fetcher(url, revision)
-    test_dir = fetcher.fetch(tempdir)
-    tester = get_tester(test_dir)
+    tempdir = None
+    try:
+        tempdir = tempfile.mkdtemp()
+        fetcher = get_fetcher(url, revision)
+        test_dir = fetcher.fetch(tempdir)
+        tester = get_tester(test_dir)
 
-    start = timestamp()
-    result = tester.test(**kw)
-    stop = timestamp()
+        start = timestamp()
+        result = tester.test(**kw)
+        stop = timestamp()
 
-    result['url'] = url
-    result['revision'] = revision
-    result['started'] = start
-    result['finished'] = stop
+        result['url'] = url
+        result['revision'] = revision
+        result['started'] = start
+        result['finished'] = stop
+    finally:
+        if tempdir and not log.getEffectiveLevel() == logging.DEBUG:
+            shutil.rmtree(tempdir)
 
     return result

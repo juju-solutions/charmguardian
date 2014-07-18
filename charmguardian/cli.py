@@ -32,9 +32,6 @@ import logging
 
 from .testers import test
 
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger(__name__)
-
 
 def get_parser():
     description, epilog = __doc__.split('---')
@@ -53,6 +50,10 @@ def get_parser():
         'revision', nargs='?',
         help='Revision to test. Defaults to HEAD of branch implied by URL.',
     )
+    parser.add_argument(
+        '--debug', action='store_true',
+        help='Increase output verbosity and skip cleanup of temp files.',
+    )
 
     return parser
 
@@ -60,7 +61,10 @@ def get_parser():
 def main():
     parser = get_parser()
     args = parser.parse_args()
-    result = test(args.url, args.revision)
+
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.ERROR)
+
+    result = test(args.url, revision=args.revision)
     print(json.dumps(result, indent=4))
 
 
