@@ -12,7 +12,7 @@ First activate the virtualenv: `source .venv/bin/activate`
 
 ```
 $ charmguardian -h
-usage: charmguardian [-h] url [revision]
+usage: charmguardian [-h] [--debug] url [revision]
 
 charmguardian is a test-runner for Juju charms and bundles.
 
@@ -39,14 +39,21 @@ export BUNDLE_TEST_ENVS=local,amazon
 
 # Test Launchpad repo at tip
 charmguardian lp:~charmers/charms/precise/ghost/trunk
+charmguardian launchpad:~charmers/charms/precise/ghost/trunk
+charmguardian https://launchpad.net/~charmers/charms/precise/ghost/trunk
 
-# Test Launchpad merge proposal (target branch must contain charm or
-bundle)
-charmguardian
-lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
+# Test Launchpad merge proposal (target branch must contain charm or bundle)
+charmguardian lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
 
 # Test Github repo at specific revision
 charmguardian gh:charms/apache2 52e73d
+charmguardian github:charms/apache2 52e73d
+charmguardian https://github.com/charms/apache2 52e73d
+
+# Test Bitbucket repo at specific revision
+charmguardian bb:battlemidget/juju-apache-gunicorn-django.git
+charmguardian bitbucket:battlemidget/juju-apache-gunicorn-django.git
+charmguardian https://bitbucket.org/battlemidget/juju-apache-gunicorn-django.git
 
 # Test local directory
 charmguardian local:~/src/charms/precise/meteor

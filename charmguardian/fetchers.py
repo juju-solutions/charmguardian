@@ -76,6 +76,32 @@ class GithubFetcher(Fetcher):
         return dir_
 
 
+class BitbucketFetcher(Fetcher):
+    MATCH = re.compile(r"""
+    ^(bb:|bitbucket:|https?://(www\.)?bitbucket.org/)(?P<repo>.*)$
+    """, re.VERBOSE)
+
+    def fetch(self, dir_):
+        dir_ = tempfile.mkdtemp(dir=dir_)
+        url = 'https://bitbucket.org/' + self.repo
+        if url.endswith('.git'):
+            return self._fetch_git(url, dir_)
+        return self._fetch_hg(url, dir_)
+
+    def _fetch_git(self, url, dir_):
+        git('clone {} {}'.format(url, dir_))
+        if self.revision:
+            git('checkout {}'.format(self.revision), cwd=dir_)
+        return dir_
+
+    def _fetch_hg(self, url, dir_):
+        cmd = 'clone {} {}'.format(url, dir_)
+        if self.revision:
+            cmd = '{} -u {}'.format(cmd, self.revision)
+        hg(cmd)
+        return dir_
+
+
 class LocalFetcher(Fetcher):
     MATCH = re.compile(r"""
     ^local:(?P<path>.*)$
@@ -89,14 +115,18 @@ class LocalFetcher(Fetcher):
 
 
 def bzr(cmd, **kw):
-    cmd = 'bzr ' + cmd
-    log.debug(cmd)
-    args = shlex.split(cmd)
-    subprocess.check_call(args, **kw)
+    check_call('bzr ' + cmd, **kw)
 
 
 def git(cmd, **kw):
-    cmd = 'git ' + cmd
+    check_call('git ' + cmd, **kw)
+
+
+def hg(cmd, **kw):
+    check_call('hg ' + cmd, **kw)
+
+
+def check_call(cmd, **kw):
     log.debug(cmd)
     args = shlex.split(cmd)
     subprocess.check_call(args, **kw)
@@ -106,6 +136,7 @@ FETCHERS = [
     BzrFetcher,
     BzrMergeProposalFetcher,
     GithubFetcher,
+    BitbucketFetcher,
     LocalFetcher,
 ]
 

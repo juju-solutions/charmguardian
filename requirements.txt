@@ -8,6 +8,7 @@ charmworldlib==0.4.1
 coverage==3.7.1
 flake8==2.2.2
 juju-deployer==0.3.8
+mercurial==3.0.1
 mock==1.0.1
 nose==1.3.1
 requests==2.3.0
