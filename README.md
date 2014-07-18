@@ -51,6 +51,7 @@ charmguardian github:charms/apache2 52e73d
 charmguardian https://github.com/charms/apache2 52e73d
 
 # Test Bitbucket repo at specific revision
+# (For Bitbucket, repos that don't end in '.git' are assumed to be Mercurial.)
 charmguardian bb:battlemidget/juju-apache-gunicorn-django.git
 charmguardian bitbucket:battlemidget/juju-apache-gunicorn-django.git
 charmguardian https://bitbucket.org/battlemidget/juju-apache-gunicorn-django.git
