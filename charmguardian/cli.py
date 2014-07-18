@@ -1,3 +1,31 @@
+"""
+charmguardian is a test-runner for Juju charms and bundles.
+---
+Use CHARM_TEST_ENVS and BUNDLE_TEST_ENVS to control which Juju environments
+are used for tests (default is 'local').
+
+Test results are written to stdout as json.
+
+
+EXAMPLES
+
+# Set test environments
+export CHARM_TEST_ENVS=local,amazon
+export BUNDLE_TEST_ENVS=local,amazon
+
+# Test Launchpad repo at tip
+charmguardian lp:~charmers/charms/precise/ghost/trunk
+
+# Test Launchpad merge proposal (target branch must contain charm or bundle)
+charmguardian lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
+
+# Test Github repo at specific revision
+charmguardian gh:charms/apache2 52e73d
+
+# Test local directory
+charmguardian local:~/src/charms/precise/meteor
+
+"""
 import argparse
 import json
 import logging
@@ -9,7 +37,13 @@ log = logging.getLogger(__name__)
 
 
 def get_parser():
-    parser = argparse.ArgumentParser()
+    description, epilog = __doc__.split('---')
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description,
+        epilog=epilog,
+    )
 
     parser.add_argument(
         'url',

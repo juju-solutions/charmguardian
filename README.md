@@ -8,40 +8,48 @@ Clone repo and run `make` in the top-level directory.
 
 ## Usage
 
-* Activate the virtualenv: `source .venv/bin/activate`
-* Run `charmguardian URL`, where URL is the path to the local or remote
-  charm or bundle to test (see Examples below).
-* Use `CHARM_TEST_ENVS` and `BUNDLE_TEST_ENVS` to specify which juju
-  environments are used for tests (default is 'local').
-* Test results are written to stdout as json.
+First activate the virtualenv: `source .venv/bin/activate`
 
-## Examples
+```
+$ charmguardian -h
+usage: charmguardian [-h] url [revision]
 
-### Launchpad
+charmguardian is a test-runner for Juju charms and bundles.
 
-Test a charm using the default 'local' environment:
+positional arguments:
+  url         URL of the charm/bundle/merge proposal to test.
+  revision    Revision to test. Defaults to HEAD of branch implied by
+URL.
 
-    charmguardian lp:~charmers/charms/precise/ghost/trunk
+optional arguments:
+  -h, --help  show this help message and exit
 
-Test a bundle using the 'local' and 'amazon' environments:
+Use CHARM_TEST_ENVS and BUNDLE_TEST_ENVS to control which Juju
+environments
+are used for tests (default is 'local').
 
-    BUNDLE_TEST_ENVS=local,amazon charmguardian lp:~bac/charms/bundles/charmworld-demo/bundle
+Test results are written to stdout as json.
 
-Test a merge proposal (target branch must contain a charm or bundle):
+EXAMPLES
 
-    charmguardian lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
+# Set test environments
+export CHARM_TEST_ENVS=local,amazon
+export BUNDLE_TEST_ENVS=local,amazon
 
-### Github
+# Test Launchpad repo at tip
+charmguardian lp:~charmers/charms/precise/ghost/trunk
 
-Test a charm, redirecting json results to a file:
+# Test Launchpad merge proposal (target branch must contain charm or
+bundle)
+charmguardian
+lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
 
-    charmguardian gh:tvansteenburgh/meteor-charm > test_results.json
+# Test Github repo at specific revision
+charmguardian gh:charms/apache2 52e73d
 
-### Local Filesystem
-
-Test a charm:
-
-    charmguardian local:~/src/charms/precise/meteor
+# Test local directory
+charmguardian local:~/src/charms/precise/meteor
+```
 
 ## Output
 
@@ -57,8 +65,6 @@ See the `examples/` directory for sample output.
   deployment. This may change or be configurable in the future.
 
 ## TODO
-
-There's still a lot to be done:
 
 * Add Fetchers for more url and repo types
 * Add support for testing at specific revisions (other than just HEAD)

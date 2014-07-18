@@ -23,9 +23,10 @@ class BzrFetcher(Fetcher):
 
     def fetch(self, dir_):
         dir_ = tempfile.mkdtemp(dir=dir_)
-        log.debug('Cloning %s to %s', self.url, dir_)
-        bzr('branch --use-existing-dir {} {}'.format(self.url, dir_))
-        # TODO checkout correct revision
+        cmd = 'branch --use-existing-dir {} {}'.format(self.url, dir_)
+        if self.revision:
+            cmd = '{} -r {}'.format(cmd, self.revision)
+        bzr(cmd)
         return dir_
 
 
@@ -41,9 +42,7 @@ class BzrMergeProposalFetcher(Fetcher):
         merge_data = requests.get(url).json()
         target = 'lp:' + merge_data['target_branch_link'][len(api_base):]
         source = 'lp:' + merge_data['source_branch_link'][len(api_base):]
-        log.debug('Cloning %s to %s', target, dir_)
         bzr('branch --use-existing-dir {} {}'.format(target, dir_))
-        log.debug('Merging %s into %s', source, dir_)
         bzr('merge {}'.format(source), cwd=dir_)
         return dir_
 
@@ -56,9 +55,9 @@ class GithubFetcher(Fetcher):
     def fetch(self, dir_):
         dir_ = tempfile.mkdtemp(dir=dir_)
         url = 'https://github.com/' + self.url[len('gh:'):]
-        log.debug('Cloning %s to %s', url, dir_)
         git('clone {} {}'.format(url, dir_))
-        # TODO checkout correct revision
+        if self.revision:
+            git('checkout {}'.format(self.revision), cwd=dir_)
         return dir_
 
 
@@ -76,12 +75,14 @@ class LocalFetcher(Fetcher):
 
 def bzr(cmd, **kw):
     cmd = 'bzr ' + cmd
+    log.debug(cmd)
     args = shlex.split(cmd)
     subprocess.check_call(args, **kw)
 
 
 def git(cmd, **kw):
     cmd = 'git ' + cmd
+    log.debug(cmd)
     args = shlex.split(cmd)
     subprocess.check_call(args, **kw)
 
