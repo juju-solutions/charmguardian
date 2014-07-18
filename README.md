@@ -64,9 +64,3 @@ See the `examples/` directory for sample output.
 * When testing a bundle, if multiple deployments are included in the
   bundle file, one is selected randomly and tests are run against that
   deployment. This may change or be configurable in the future.
-
-## TODO
-
-* Add Fetchers for more url and repo types
-* Add support for testing at specific revisions (other than just HEAD)
-* Add tests

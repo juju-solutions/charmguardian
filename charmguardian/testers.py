@@ -105,7 +105,7 @@ class CharmTester(Tester):
 
         for bundle in self.bundles():
             bundle_tests[bundle.id] = test(
-                bundle.branch_spec,
+                'lp:' + bundle.branch_spec,
                 charm_name=self.charm_name,
                 charmdir=self.test_dir)
             if result == 'pass':
