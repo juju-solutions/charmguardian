@@ -47,7 +47,6 @@ class BundleTester(Tester):
                     result = get_test_result(deployment_tests[env])
 
         return {
-            'type': 'bundle',
             'result': result,
             'tests': bundle_tests,
         }
@@ -114,7 +113,6 @@ class CharmTester(Tester):
                     result = 'fail'
 
         return {
-            'type': 'charm',
             'result': result,
             'tests': {
                 'charm': charm_tests,

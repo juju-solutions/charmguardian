@@ -50,7 +50,7 @@ def get_bundle_test_envs():
 
 
 def timestamp():
-    return str(datetime.utcnow())
+    return datetime.utcnow().isoformat() + 'Z'
 
 
 def get_test_result(tests):
