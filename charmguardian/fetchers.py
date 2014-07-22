@@ -47,7 +47,8 @@ class BzrFetcher(Fetcher):
         return dir_
 
     def get_revision(self, dir_):
-        return check_output('bzr revno', cwd=dir_)
+        rev_info = check_output('bzr revision-info', cwd=dir_)
+        return rev_info.split()[1]
 
 
 class BzrMergeProposalFetcher(BzrFetcher):
