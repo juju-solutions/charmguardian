@@ -158,7 +158,7 @@ def test(url, revision=None, **kw):
         stop = timestamp()
 
         result['url'] = url
-        result['revision'] = revision
+        result['revision'] = fetcher.get_revision(test_dir)
         result['started'] = start
         result['finished'] = stop
     finally:

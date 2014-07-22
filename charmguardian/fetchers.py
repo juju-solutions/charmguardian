@@ -23,6 +23,9 @@ class Fetcher(object):
         match = cls.MATCH.search(url)
         return match.groupdict() if match else {}
 
+    def get_revision(self, dir_):
+        return self.revision
+
 
 class BzrFetcher(Fetcher):
     MATCH = re.compile(r"""
@@ -42,6 +45,9 @@ class BzrFetcher(Fetcher):
             cmd = '{} -r {}'.format(cmd, self.revision)
         bzr(cmd)
         return dir_
+
+    def get_revision(self, dir_):
+        return check_output('bzr revno', cwd=dir_)
 
 
 class BzrMergeProposalFetcher(BzrFetcher):
@@ -75,6 +81,9 @@ class GithubFetcher(Fetcher):
             git('checkout {}'.format(self.revision), cwd=dir_)
         return dir_
 
+    def get_revision(self, dir_):
+        return check_output('git rev-parse HEAD', cwd=dir_)
+
 
 class BitbucketFetcher(Fetcher):
     MATCH = re.compile(r"""
@@ -100,6 +109,12 @@ class BitbucketFetcher(Fetcher):
             cmd = '{} -u {}'.format(cmd, self.revision)
         hg(cmd)
         return dir_
+
+    def get_revision(self, dir_):
+        cmd = "hg log -l 1 --template '{node}\n' -r ."
+        if '.git' in os.listdir(dir_):
+            cmd = 'git rev-parse HEAD'
+        return check_output(cmd, cwd=dir_)
 
 
 class LocalFetcher(Fetcher):
@@ -130,6 +145,13 @@ def check_call(cmd, **kw):
     log.debug(cmd)
     args = shlex.split(cmd)
     subprocess.check_call(args, **kw)
+
+
+def check_output(cmd, **kw):
+    args = shlex.split(cmd)
+    output = subprocess.check_output(args, **kw).strip()
+    log.debug('%s: %s', cmd, output)
+    return output
 
 
 FETCHERS = [
