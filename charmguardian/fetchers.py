@@ -8,6 +8,8 @@ import tempfile
 
 import requests
 
+from charmworldlib.charm import Charm
+
 log = logging.getLogger(__name__)
 
 
@@ -24,7 +26,17 @@ class Fetcher(object):
         return match.groupdict() if match else {}
 
     def get_revision(self, dir_):
-        return self.revision
+        dirlist = os.listdir(dir_)
+        if '.bzr' in dirlist:
+            rev_info = check_output('bzr revision-info', cwd=dir_)
+            return rev_info.split()[1]
+        elif '.git' in dirlist:
+            return check_output('git rev-parse HEAD', cwd=dir_)
+        elif '.hg' in dirlist:
+            return check_output(
+                "hg log -l 1 --template '{node}\n' -r .", cwd=dir_)
+        else:
+            return self.revision
 
 
 class BzrFetcher(Fetcher):
@@ -45,10 +57,6 @@ class BzrFetcher(Fetcher):
             cmd = '{} -r {}'.format(cmd, self.revision)
         bzr(cmd)
         return dir_
-
-    def get_revision(self, dir_):
-        rev_info = check_output('bzr revision-info', cwd=dir_)
-        return rev_info.split()[1]
 
 
 class BzrMergeProposalFetcher(BzrFetcher):
@@ -82,9 +90,6 @@ class GithubFetcher(Fetcher):
             git('checkout {}'.format(self.revision), cwd=dir_)
         return dir_
 
-    def get_revision(self, dir_):
-        return check_output('git rev-parse HEAD', cwd=dir_)
-
 
 class BitbucketFetcher(Fetcher):
     MATCH = re.compile(r"""
@@ -111,12 +116,6 @@ class BitbucketFetcher(Fetcher):
         hg(cmd)
         return dir_
 
-    def get_revision(self, dir_):
-        cmd = "hg log -l 1 --template '{node}\n' -r ."
-        if '.git' in os.listdir(dir_):
-            cmd = 'git rev-parse HEAD'
-        return check_output(cmd, cwd=dir_)
-
 
 class LocalFetcher(Fetcher):
     MATCH = re.compile(r"""
@@ -128,6 +127,19 @@ class LocalFetcher(Fetcher):
         dst = os.path.join(dir_, os.path.basename(src.rstrip('/')))
         shutil.copytree(src, dst)
         return dst
+
+
+class CharmstoreFetcher(Fetcher):
+    MATCH = re.compile(r"""
+    ^cs:(?P<charm>.*)$
+    """, re.VERBOSE)
+
+    def fetch(self, dir_):
+        check_call('charm get {} {}'.format(self.charm, dir_))
+        return os.path.join(dir_, os.listdir(dir_)[0])
+
+    def get_revision(self, dir_):
+        return Charm(self.charm).id.split('-')[-1]
 
 
 def bzr(cmd, **kw):
@@ -161,6 +173,7 @@ FETCHERS = [
     GithubFetcher,
     BitbucketFetcher,
     LocalFetcher,
+    CharmstoreFetcher,
 ]
 
 

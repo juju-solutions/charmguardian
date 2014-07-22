@@ -13,6 +13,10 @@ EXAMPLES
 export CHARM_TEST_ENVS=local,amazon
 export BUNDLE_TEST_ENVS=local,amazon
 
+# Test charm from Charm Store
+charmguardian cs:wordpress
+charmguardian cs:precise/wordpress
+
 # Test Launchpad repo at tip
 charmguardian lp:~charmers/charms/precise/ghost/trunk
 charmguardian launchpad:~charmers/charms/precise/ghost/trunk
