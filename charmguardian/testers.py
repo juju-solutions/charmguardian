@@ -61,7 +61,7 @@ class BundleTester(Tester):
         for bundle in bundle_data.itervalues():
             for svc in bundle['services'].itervalues():
                 # TODO make this comparison more precise
-                if charm_name in svc['charm']:
+                if charm_name in svc.get('charm', {}):
                     svc['branch'] = charmdir
                     del svc['charm']
         with open(bundle_file, 'w') as f:
