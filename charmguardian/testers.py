@@ -48,10 +48,7 @@ class BundleTester(Tester):
 
         return {
             'result': result,
-            'tests': {
-                'charm': {},
-                'bundle': bundle_tests,
-            }
+            'tests': bundle_tests,
         }
 
     def _swap_charm(self, charm_name, charmdir):
