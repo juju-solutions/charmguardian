@@ -46,6 +46,12 @@ class BundleTester(Tester):
                 if result == 'pass':
                     result = get_test_result(deployment_tests[env])
 
+        if not (charm_name or charmdir):
+            bundle_tests = {
+                'charm': {},
+                'bundle': bundle_tests,
+            }
+
         return {
             'result': result,
             'tests': bundle_tests,
