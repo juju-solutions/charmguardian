@@ -45,6 +45,7 @@ import json
 import logging
 
 from .testers import test
+from .formatters import fmt
 
 
 def get_parser():
@@ -79,6 +80,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.ERROR)
 
     result = test(args.url, revision=args.revision)
+    result = fmt(args.url, result)
     print(json.dumps(result, indent=4))
 
 

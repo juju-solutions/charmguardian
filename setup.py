@@ -13,7 +13,11 @@ SETUP = {
     'entry_points': {
         'console_scripts': [
             'charmguardian = charmguardian.cli:main',
-        ]
+        ],
+        'charmguardian.formatters': [
+            'bundle = charmguardian.formatters:BundleFormatter',
+            'charm = charmguardian.formatters:CharmFormatter',
+        ],
     }
 }
 
