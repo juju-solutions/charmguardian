@@ -5,10 +5,12 @@ import shlex
 import shutil
 import subprocess
 import tempfile
+import zipfile
 
 import requests
 
 from charmworldlib.charm import Charm
+from charmworldlib.bundle import Bundle
 
 log = logging.getLogger(__name__)
 
@@ -142,6 +144,68 @@ class CharmstoreFetcher(Fetcher):
         return Charm(self.charm).id.split('-')[-1]
 
 
+class CharmstoreDownloader(Fetcher):
+    MATCH = re.compile(r"""
+    ^cs:(?P<charm>.*)$
+    """, re.VERBOSE)
+
+    STORE_URL = 'https://store.juju.ubuntu.com/charm/'
+
+    def fetch(self, dir_):
+        url = Charm(self.charm).url[len('cs:'):]
+        url = self.STORE_URL + url
+        archive = self.download_file(url, dir_)
+        charm_dir = self.extract_archive(archive, dir_)
+        return charm_dir
+
+    def extract_archive(self, archive, dir_):
+        tempdir = tempfile.mkdtemp(dir=dir_)
+        log.debug("Extracting %s to %s", archive, tempdir)
+        archive = zipfile.ZipFile(archive, 'r')
+        archive.extractall(tempdir)
+        return tempdir
+
+    def download_file(self, url, dir_):
+        _, filename = tempfile.mkstemp(dir=dir_)
+        log.debug("Downloading %s", url)
+        r = requests.get(url, stream=True)
+        with open(filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        return filename
+
+    def get_revision(self, dir_):
+        return Charm(self.charm).id.split('-')[-1]
+
+
+class BundleDownloader(Fetcher):
+    MATCH = re.compile(r"""
+    ^bundle:(?P<bundle>.*)$
+    """, re.VERBOSE)
+
+    def fetch(self, dir_):
+        url = Bundle(self.bundle).deployer_file_url
+        bundle_dir = self.download_file(url, dir_)
+        return bundle_dir
+
+    def download_file(self, url, dir_):
+        bundle_dir = tempfile.mkdtemp(dir=dir_)
+        bundle_file = os.path.join(bundle_dir, 'bundles.yaml')
+        log.debug("Downloading %s to %s", url, bundle_file)
+        r = requests.get(url, stream=True)
+        with open(bundle_file, 'w') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+        return bundle_dir
+
+    def get_revision(self, dir_):
+        return Bundle(self.bundle).basket_revision
+
+
 def bzr(cmd, **kw):
     check_call('bzr ' + cmd, **kw)
 
@@ -173,7 +237,8 @@ FETCHERS = [
     GithubFetcher,
     BitbucketFetcher,
     LocalFetcher,
-    CharmstoreFetcher,
+    CharmstoreDownloader,
+    BundleDownloader,
 ]
 
 

@@ -41,6 +41,12 @@ export BUNDLE_TEST_ENVS=local,amazon
 charmguardian cs:wordpress
 charmguardian cs:precise/wordpress
 
+# Test bundle from Store
+charmguardian bundle:mediawiki/single
+charmguardian bundle:mediawiki/6/single
+charmguardian bundle:~charmers/mediawiki/single
+charmguardian bundle:~charmers/mediawiki/6/single
+
 # Test Launchpad repo at tip
 charmguardian lp:~charmers/charms/precise/ghost/trunk
 charmguardian launchpad:~charmers/charms/precise/ghost/trunk
