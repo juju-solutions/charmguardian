@@ -6,6 +6,8 @@ from ..fetchers import (
     GithubFetcher,
     BitbucketFetcher,
     LocalFetcher,
+    CharmstoreDownloader,
+    BundleDownloader,
 )
 
 
@@ -29,6 +31,8 @@ class BzrFetcherTest(unittest.TestCase):
             f('gh:charms/meteor'),
             f('bb:charms/meteor'),
             f('local:~/src/charms/precise/meteor'),
+            f('cs:precise/meteor'),
+            f('bundle:mediawiki/single'),
         ]
 
         for test in good_tests:
@@ -53,6 +57,8 @@ class BzrMergeProposalFetcherTest(unittest.TestCase):
             f('gh:charms/meteor'),
             f('bb:charms/meteor'),
             f('local:~/src/charms/precise/meteor'),
+            f('cs:precise/meteor'),
+            f('bundle:mediawiki/single'),
         ]
 
         for test in good_tests:
@@ -82,6 +88,8 @@ class GithubFetcherTest(unittest.TestCase):
             f('lp:~tvansteenburgh/charms/precise/foo/+merge/12345'),
             f('bb:charms/meteor'),
             f('local:~/src/charms/precise/meteor'),
+            f('cs:precise/meteor'),
+            f('bundle:mediawiki/single'),
         ]
 
         for test in good_tests:
@@ -109,6 +117,8 @@ class BitbucketFetcherTest(unittest.TestCase):
             f('lp:~tvansteenburgh/charms/precise/foo/+merge/12345'),
             f('gh:charms/meteor'),
             f('local:~/src/charms/precise/meteor'),
+            f('cs:precise/meteor'),
+            f('bundle:mediawiki/single'),
         ]
 
         for test in good_tests:
@@ -131,10 +141,60 @@ class LocalFetcherTest(unittest.TestCase):
             f('lp:~tvansteenburgh/charms/precise/foo/+merge/12345'),
             f('gh:charms/meteor'),
             f('bb:charms/meteor'),
+            f('cs:precise/meteor'),
+            f('bundle:mediawiki/single'),
         ]
 
         for test in good_tests:
             self.assertEqual(test['path'], '~/src/charms/precise/meteor')
+
+        for test in bad_tests:
+            self.assertEqual(test, {})
+
+
+class CharmstoreDownloaderTest(unittest.TestCase):
+    def test_can_fetch(self):
+        f = CharmstoreDownloader.can_fetch
+
+        good_tests = [
+            f('cs:precise/meteor'),
+        ]
+
+        bad_tests = [
+            f('lp:~tvansteenburgh/charms/precise/foo'),
+            f('lp:~tvansteenburgh/charms/precise/foo/+merge/12345'),
+            f('gh:charms/meteor'),
+            f('bb:charms/meteor'),
+            f('local:~/src/charms/precise/meteor'),
+            f('bundle:mediawiki/single'),
+        ]
+
+        for test in good_tests:
+            self.assertEqual(test['charm'], 'precise/meteor')
+
+        for test in bad_tests:
+            self.assertEqual(test, {})
+
+
+class BundleDownloaderTest(unittest.TestCase):
+    def test_can_fetch(self):
+        f = BundleDownloader.can_fetch
+
+        good_tests = [
+            f('bundle:mediawiki/single'),
+        ]
+
+        bad_tests = [
+            f('lp:~tvansteenburgh/charms/precise/foo'),
+            f('lp:~tvansteenburgh/charms/precise/foo/+merge/12345'),
+            f('gh:charms/meteor'),
+            f('bb:charms/meteor'),
+            f('local:~/src/charms/precise/meteor'),
+            f('cs:precise/meteor'),
+        ]
+
+        for test in good_tests:
+            self.assertEqual(test['bundle'], 'mediawiki/single')
 
         for test in bad_tests:
             self.assertEqual(test, {})
