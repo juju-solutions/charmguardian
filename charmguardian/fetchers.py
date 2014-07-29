@@ -131,19 +131,6 @@ class LocalFetcher(Fetcher):
         return dst
 
 
-class CharmstoreFetcher(Fetcher):
-    MATCH = re.compile(r"""
-    ^cs:(?P<charm>.*)$
-    """, re.VERBOSE)
-
-    def fetch(self, dir_):
-        check_call('charm get {} {}'.format(self.charm, dir_))
-        return os.path.join(dir_, os.listdir(dir_)[0])
-
-    def get_revision(self, dir_):
-        return Charm(self.charm).id.split('-')[-1]
-
-
 class CharmstoreDownloader(Fetcher):
     MATCH = re.compile(r"""
     ^cs:(?P<charm>.*)$
