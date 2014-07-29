@@ -18,11 +18,14 @@ def get_formatter(typ):
 
 class BundleFormatter(object):
     def fmt(self, url, result):
-        tests = result.pop('tests')
-        bundle = {'tests': tests}
-        bundle['url'] = url
-        for k in ('result', 'revision', 'started', 'finished'):
-            bundle[k] = result[k]
+        bundle = {
+            'url': url,
+            'tests': result['tests'],
+            'result': result['result'],
+            'revision': result['revision'],
+            'started': result['started'],
+            'finished': result['finished'],
+        }
         result['tests'] = {
             'charm': {},
             'bundle': {
