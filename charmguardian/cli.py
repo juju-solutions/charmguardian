@@ -49,6 +49,7 @@ charmguardian local:~/src/charms/precise/meteor
 import argparse
 import json
 import logging
+import sys
 
 from .testers import test
 from .formatters import fmt
@@ -85,9 +86,13 @@ def main():
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.ERROR)
 
-    result = test(args.url, revision=args.revision)
-    result = fmt(args.url, result)
-    print(json.dumps(result, indent=4))
+    try:
+        result = test(args.url, revision=args.revision)
+        result = fmt(args.url, result)
+        print(json.dumps(result, indent=4))
+    except Exception as e:
+        sys.stderr.write('{}\n'.format(e))
+        sys.exit(1)
 
 
 if __name__ == '__main__':
