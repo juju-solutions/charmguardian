@@ -10,8 +10,10 @@ log = logging.getLogger(__name__)
 
 def bundletester(dir_, env, deployment=None):
     result_file = os.path.join(dir_, 'result.json')
-    cmd = 'bundletester -F -r json -t {} -e {} -o {}'.format(
-        dir_, env, result_file)
+    log_level = \
+        'DEBUG' if log.getEffectiveLevel() == logging.DEBUG else 'ERROR'
+    cmd = 'bundletester -F -r json -t {} -e {} -o {} -l {}'.format(
+        dir_, env, result_file, log_level)
     if deployment:
         cmd = '{} -d {}'.format(cmd, deployment)
     args = shlex.split(cmd)
