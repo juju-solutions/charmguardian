@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 SETUP = {
     'name': "charmguardian",
     'packages': find_packages(),
-    'version': "0.1",
+    'version': "0.1.0",
     'author': "Tim Van Steenburgh",
     'author_email': "tvansteenburgh@gmail.com",
     'url': "https://github.com/tvansteenburgh/charmguardian",
