@@ -29,7 +29,8 @@ charmguardian launchpad:~charmers/charms/precise/ghost/trunk
 charmguardian https://launchpad.net/~charmers/charms/precise/ghost/trunk
 
 # Test Launchpad merge proposal (target branch must contain charm or bundle)
-charmguardian lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
+charmguardian\
+ lp:~davidpbritton/charms/precise/apache2/avoid-regen-cert/+merge/221102
 
 # Test Github repo at specific revision
 charmguardian gh:charms/apache2 52e73d
@@ -40,7 +41,8 @@ charmguardian https://github.com/charms/apache2 52e73d
 # (For Bitbucket, repos that don't end in '.git' are assumed to be Mercurial.)
 charmguardian bb:battlemidget/juju-apache-gunicorn-django.git
 charmguardian bitbucket:battlemidget/juju-apache-gunicorn-django.git
-charmguardian https://bitbucket.org/battlemidget/juju-apache-gunicorn-django.git
+charmguardian\
+ https://bitbucket.org/battlemidget/juju-apache-gunicorn-django.git
 
 # Test local directory
 charmguardian local:~/src/charms/precise/meteor
@@ -76,6 +78,11 @@ def get_parser():
         '--debug', action='store_true',
         help='Increase output verbosity and skip cleanup of temp files.',
     )
+    parser.add_argument(
+        '--shallow', action='store_true',
+        help='When testing a charm, test the charm only; do not test bundles '
+             'which contain the charm.',
+    )
 
     return parser
 
@@ -87,7 +94,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.ERROR)
 
     try:
-        result = test(args.url, revision=args.revision)
+        result = test(args.url, revision=args.revision, shallow=args.shallow)
         result = fmt(args.url, result)
         print(json.dumps(result, indent=4))
     except Exception as e:

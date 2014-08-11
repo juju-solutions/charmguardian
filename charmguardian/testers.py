@@ -29,7 +29,7 @@ class BundleTester(Tester):
     def can_test(dir_):
         return 'bundles.yaml' in os.listdir(dir_)
 
-    def test(self, charm_name=None, charmdir=None):
+    def test(self, shallow=False, charm_name=None, charmdir=None):
         bundle_tests = {}
         result = 'pass'
 
@@ -88,7 +88,7 @@ class CharmTester(Tester):
             metadata = yaml.load(f)
             return metadata['name']
 
-    def test(self):
+    def test(self, shallow=False):
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
 
@@ -104,14 +104,15 @@ class CharmTester(Tester):
             if result == 'pass':
                 result = get_test_result(charm_tests[env])
 
-        for bundle in self.bundles():
-            bundle_tests[bundle.id] = test(
-                'lp:' + bundle.branch_spec,
-                charm_name=self.charm_name,
-                charmdir=self.test_dir)
-            if result == 'pass':
-                if bundle_tests[bundle.id]['result'] == 'fail':
-                    result = 'fail'
+        if not shallow:
+            for bundle in self.bundles():
+                bundle_tests[bundle.id] = test(
+                    'lp:' + bundle.branch_spec,
+                    charm_name=self.charm_name,
+                    charmdir=self.test_dir)
+                if result == 'pass':
+                    if bundle_tests[bundle.id]['result'] == 'fail':
+                        result = 'fail'
 
         return {
             'type': 'charm',
@@ -144,7 +145,7 @@ def get_tester(test_dir):
     raise ValueError('No tester for dir: %s' % test_dir)
 
 
-def test(url, revision=None, **kw):
+def test(url, revision=None, shallow=False, **kw):
     tempdir = None
     try:
         tempdir = tempfile.mkdtemp()
@@ -153,7 +154,7 @@ def test(url, revision=None, **kw):
         tester = get_tester(test_dir)
 
         start = timestamp()
-        result = tester.test(**kw)
+        result = tester.test(shallow=shallow, **kw)
         stop = timestamp()
 
         result['url'] = url
