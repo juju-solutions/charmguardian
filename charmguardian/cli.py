@@ -91,7 +91,10 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.ERROR)
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.ERROR,
+        format='%(asctime)s %(message)s',
+    )
 
     try:
         result = test(args.url, revision=args.revision, shallow=args.shallow)
