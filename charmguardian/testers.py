@@ -106,6 +106,7 @@ class CharmTester(Tester):
 
         if not shallow:
             for bundle in self.bundles():
+                log.debug('Testing bundle %s', bundle.id)
                 bundle_tests[bundle.id] = test(
                     'lp:' + bundle.branch_spec,
                     charm_name=self.charm_name,
@@ -125,10 +126,11 @@ class CharmTester(Tester):
 
     def bundles(self):
         bundles = [bundle for bundle in Bundles().search(self.charm_name)
-                   if self.charm_name in bundle.charms]
+                   if bundle.promulgated and self.charm_name in bundle.charms]
         log.debug(
-            'Bundles that contain %s: %s', self.charm_name,
-            ', '.join([b.basket_name for b in bundles]) if bundles else 'None')
+            'Promulgated bundles that contain %s: %s', self.charm_name,
+            ', '.join(['{}/{}'.format(b.basket_name, b.name) for b in bundles])
+            if bundles else 'None')
         return bundles
 
 
