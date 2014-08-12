@@ -58,8 +58,8 @@ def timestamp():
 def get_test_result(tests):
     for test in tests:
         if test.get('test') == 'charm-proof':
-            if test['returncode'] > 100:
+            if test.get('returncode', 0) > 100:
                 return 'fail'
-        elif test['returncode'] != 0:
+        elif test.get('returncode', 0) != 0:
             return 'fail'
     return 'pass'
