@@ -1,0 +1,1 @@
+git+git://github.com/marcoceppi/amulet.git@d7629428bb2e3b43eb0e53a8aea27af770cf9c43#egg=amulet
