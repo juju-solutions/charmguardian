@@ -45,7 +45,7 @@ class BundleTester(Tester):
                     'Testing deployment %s in env %s', deployment, env)
                 deployment_tests[env] = bundletester(
                     self.test_dir, env, deployment=deployment,
-                    exclude=exclude)
+                    exclude=exclude, skip_implicit=True)
                 if result == 'pass':
                     result = get_test_result(deployment_tests[env])
 
