@@ -32,9 +32,11 @@ class BundleTester(Tester):
     def test(self, shallow=False, charm_name=None, charmdir=None):
         bundle_tests = {}
         result = 'pass'
+        exclude = None
 
         if charm_name and charmdir:
             self._swap_charm(charm_name, charmdir)
+            exclude = charm_name
 
         for deployment in self._choose_deployments():
             bundle_tests[deployment] = deployment_tests = {}
@@ -42,7 +44,8 @@ class BundleTester(Tester):
                 log.debug(
                     'Testing deployment %s in env %s', deployment, env)
                 deployment_tests[env] = bundletester(
-                    self.test_dir, env, deployment=deployment)
+                    self.test_dir, env, deployment=deployment,
+                    exclude=exclude)
                 if result == 'pass':
                     result = get_test_result(deployment_tests[env])
 

@@ -8,7 +8,7 @@ import subprocess
 log = logging.getLogger(__name__)
 
 
-def bundletester(dir_, env, deployment=None):
+def bundletester(dir_, env, deployment=None, exclude=None):
     result_file = os.path.join(dir_, 'result.json')
     log_level = \
         'DEBUG' if log.getEffectiveLevel() == logging.DEBUG else 'ERROR'
@@ -16,6 +16,8 @@ def bundletester(dir_, env, deployment=None):
         dir_, env, result_file, log_level)
     if deployment:
         cmd = '{} -d {}'.format(cmd, deployment)
+    if exclude:
+        cmd = '{} -x {}'.format(cmd, exclude)
     args = shlex.split(cmd)
     output = ''
 
