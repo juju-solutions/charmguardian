@@ -51,10 +51,21 @@ charmguardian local:~/src/charms/precise/meteor
 import argparse
 import json
 import logging
+import os
 import sys
 
 from .testers import test
 from .formatters import fmt
+
+
+class validate_dir(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        path = os.path.abspath(os.path.expanduser(values))
+        if not os.path.isdir(path):
+            sys.stderr.write(
+                "Invalid workspace directory: {}\n".format(values))
+            sys.exit(2)
+        setattr(namespace, self.dest, path)
 
 
 def get_parser():
@@ -83,6 +94,12 @@ def get_parser():
         help='When testing a charm, test the charm only; do not test bundles '
              'which contain the charm.',
     )
+    parser.add_argument(
+        '--workspace', action=validate_dir, default=None,
+        help='Directory in which to write temp files. If not specified, temp '
+             'files will be written to the platform default location and '
+             'deleted upon process termination.',
+    )
 
     return parser
 
@@ -97,7 +114,12 @@ def main():
     )
 
     try:
-        result = test(args.url, revision=args.revision, shallow=args.shallow)
+        result = test(
+            args.url,
+            revision=args.revision,
+            shallow=args.shallow,
+            workspace=args.workspace,
+        )
         result = fmt(args.url, result)
         print(json.dumps(result, indent=4))
     except Exception as e:

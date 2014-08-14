@@ -12,18 +12,26 @@ First activate the virtualenv: `source .venv/bin/activate`
 
 ```
 $ charmguardian -h
-usage: charmguardian [-h] [--debug] url [revision]
+usage: charmguardian [-h] [--debug] [--shallow] [--workspace WORKSPACE]
+                     url [revision]
 
 charmguardian is a test-runner for Juju charms and bundles.
 
 positional arguments:
-  url         URL of the charm/bundle/merge proposal to test.
-  revision    Revision to test. Defaults to HEAD of branch implied by
-URL.
+  url                   URL of the charm/bundle/merge proposal to test.
+  revision              Revision to test. Defaults to HEAD of branch implied
+                        by URL.
 
 optional arguments:
-  -h, --help  show this help message and exit
-  --debug     Increase output verbosity and skip cleanup of temp files.
+  -h, --help            show this help message and exit
+  --debug               Increase output verbosity and skip cleanup of temp
+                        files.
+  --shallow             When testing a charm, test the charm only; do not test
+                        bundles which contain the charm.
+  --workspace WORKSPACE
+                        Directory in which to write temp files. If not
+                        specified, temp files will be written to the platform
+                        default location and deleted upon process termination.
 
 Use CHARM_TEST_ENVS and BUNDLE_TEST_ENVS to control which Juju
 environments

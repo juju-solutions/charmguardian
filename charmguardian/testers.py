@@ -30,7 +30,8 @@ class BundleTester(Tester):
     def can_test(dir_):
         return 'bundles.yaml' in os.listdir(dir_)
 
-    def test(self, shallow=False, charm_name=None, charmdir=None):
+    def test(self, shallow=False, workspace=None, charm_name=None,
+             charmdir=None):
         bundle_tests = {}
         result = 'pass'
         exclude = None
@@ -104,7 +105,7 @@ class CharmTester(Tester):
             metadata = yaml.load(f)
             return metadata['name']
 
-    def test(self, shallow=False):
+    def test(self, shallow=False, workspace=None):
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
 
@@ -125,6 +126,7 @@ class CharmTester(Tester):
                 log.debug('Testing bundle %s', bundle.id)
                 bundle_tests[bundle.id] = test(
                     'lp:' + bundle.branch_spec,
+                    workspace=workspace,
                     charm_name=self.charm_name,
                     charmdir=self.test_dir)
                 if result == 'pass':
@@ -163,16 +165,16 @@ def get_tester(test_dir):
     raise ValueError('No tester for dir: %s' % test_dir)
 
 
-def test(url, revision=None, shallow=False, **kw):
+def test(url, revision=None, shallow=False, workspace=None, **kw):
     tempdir = None
     try:
-        tempdir = tempfile.mkdtemp()
+        tempdir = workspace or tempfile.mkdtemp()
         fetcher = get_fetcher(url, revision)
         test_dir = fetcher.fetch(tempdir)
         tester = get_tester(test_dir)
 
         start = timestamp()
-        result = tester.test(shallow=shallow, **kw)
+        result = tester.test(shallow=shallow, workspace=workspace, **kw)
         stop = timestamp()
 
         result['url'] = url
@@ -180,7 +182,7 @@ def test(url, revision=None, shallow=False, **kw):
         result['started'] = start
         result['finished'] = stop
     finally:
-        if tempdir and not log.getEffectiveLevel() == logging.DEBUG:
+        if tempdir and not workspace:
             shutil.rmtree(tempdir)
 
     return result
