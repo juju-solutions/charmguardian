@@ -10,9 +10,11 @@ log = logging.getLogger(__name__)
 
 def bundletester(dir_, env, deployment=None, exclude=None,
                  skip_implicit=False):
+    debug = log.getEffectiveLevel() == logging.DEBUG
+
     result_file = os.path.join(dir_, 'result.json')
-    log_level = \
-        'DEBUG' if log.getEffectiveLevel() == logging.DEBUG else 'ERROR'
+    log_level = 'DEBUG' if debug else 'ERROR'
+
     cmd = 'bundletester -F -r json -t {} -e {} -o {} -l {}'.format(
         dir_, env, result_file, log_level)
     if deployment:
@@ -27,9 +29,16 @@ def bundletester(dir_, env, deployment=None, exclude=None,
     log.debug('Running bundletester: %s', cmd)
     p = subprocess.Popen(
         args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stdout=None if debug else subprocess.PIPE,
+        stderr=None if debug else subprocess.STDOUT,
+    )
     output, _ = p.communicate()
+
+    if p.returncode == 3:
+        return [{
+            'output': "No tests found",
+            'returncode': 0,
+        }]
 
     try:
         with open(result_file, 'r') as f:
@@ -37,7 +46,7 @@ def bundletester(dir_, env, deployment=None, exclude=None,
     except ValueError as e:
         if str(e) == 'No JSON object could be decoded':
             return [{
-                'exception': output,
+                'exception': str(e),
                 'returncode': p.returncode,
             }]
         raise
