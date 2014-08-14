@@ -5,6 +5,7 @@ import shutil
 import tempfile
 import yaml
 
+from amulet.helpers import setup_bzr, run_bzr
 from charmworldlib.bundle import Bundles
 
 from .fetchers import get_fetcher
@@ -35,6 +36,7 @@ class BundleTester(Tester):
         exclude = None
 
         if charm_name and charmdir:
+            self._ensure_bzr(charmdir)
             self._swap_charm(charm_name, charmdir)
             exclude = charm_name
 
@@ -54,6 +56,17 @@ class BundleTester(Tester):
             'result': result,
             'tests': bundle_tests,
         }
+
+    def _ensure_bzr(self, charmdir):
+        if os.path.exists(os.path.join(charmdir, '.bzr')):
+            return
+
+        setup_bzr(charmdir)
+        run_bzr(["add", "."], charmdir)
+        run_bzr([
+            "commit", "--unchanged", "-m",
+            "Creating local branch for deployer"],
+            charmdir)
 
     def _swap_charm(self, charm_name, charmdir):
         bundle_file = os.path.join(self.test_dir, 'bundles.yaml')
