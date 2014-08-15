@@ -2,7 +2,7 @@
 
 set -ex
 
-for pkg in python-virtualenv python-dev git ; do
+for pkg in python-virtualenv python-dev git unzip ; do
   if ! dpkg -s $pkg ; then
       sudo apt-get install -y $pkg
   fi

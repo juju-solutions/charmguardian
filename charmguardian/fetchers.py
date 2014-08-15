@@ -5,7 +5,6 @@ import shlex
 import shutil
 import subprocess
 import tempfile
-import zipfile
 
 import requests
 
@@ -148,8 +147,14 @@ class CharmstoreDownloader(Fetcher):
     def extract_archive(self, archive, dir_):
         tempdir = tempfile.mkdtemp(dir=dir_)
         log.debug("Extracting %s to %s", archive, tempdir)
-        archive = zipfile.ZipFile(archive, 'r')
-        archive.extractall(tempdir)
+        # Can't  extract with python due to bug that drops file
+        # permissions: http://bugs.python.org/issue15795
+        # In particular, it's important that executable test files in the
+        # archive remain executable, otherwise the tests won't be run.
+        # Instead we use a shell equivalent of the following:
+        #     archive = zipfile.ZipFile(archive, 'r')
+        #     archive.extractall(tempdir)
+        check_call('unzip {} -d {}'.format(archive, tempdir))
         return tempdir
 
     def download_file(self, url, dir_):
