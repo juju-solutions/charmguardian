@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from datetime import datetime
 import logging
 import json
@@ -10,46 +11,61 @@ log = logging.getLogger(__name__)
 
 def bundletester(dir_, env, deployment=None, exclude=None,
                  skip_implicit=False):
-    debug = log.getEffectiveLevel() == logging.DEBUG
+    with juju_env(env):
+        debug = log.getEffectiveLevel() == logging.DEBUG
 
-    result_file = os.path.join(dir_, 'result.json')
-    log_level = 'DEBUG' if debug else 'ERROR'
+        result_file = os.path.join(dir_, 'result.json')
+        log_level = 'DEBUG' if debug else 'ERROR'
 
-    cmd = 'bundletester -F -r json -t {} -e {} -o {} -l {}'.format(
-        dir_, env, result_file, log_level)
-    if deployment:
-        cmd = '{} -d {}'.format(cmd, deployment)
-    if exclude:
-        cmd = '{} -x {}'.format(cmd, exclude)
-    if skip_implicit:
-        cmd = '{} -s'.format(cmd)
-    args = shlex.split(cmd)
-    output = ''
+        cmd = 'bundletester -F -r json -t {} -e {} -o {} -l {}'.format(
+            dir_, env, result_file, log_level)
+        if deployment:
+            cmd = '{} -d {}'.format(cmd, deployment)
+        if exclude:
+            cmd = '{} -x {}'.format(cmd, exclude)
+        if skip_implicit:
+            cmd = '{} -s'.format(cmd)
+        args = shlex.split(cmd)
+        output = ''
 
-    log.debug('Running bundletester: %s', cmd)
-    p = subprocess.Popen(
-        args,
-        stdout=None if debug else subprocess.PIPE,
-        stderr=None if debug else subprocess.STDOUT,
-    )
-    output, _ = p.communicate()
+        log.debug('Running bundletester: %s', cmd)
+        p = subprocess.Popen(
+            args,
+            stdout=None if debug else subprocess.PIPE,
+            stderr=None if debug else subprocess.STDOUT,
+        )
+        output, _ = p.communicate()
 
-    if p.returncode == 3:
-        return [{
-            'output': "No tests found",
-            'returncode': 0,
-        }]
-
-    try:
-        with open(result_file, 'r') as f:
-            return json.load(f)
-    except ValueError as e:
-        if str(e) == 'No JSON object could be decoded':
+        if p.returncode == 3:
             return [{
-                'exception': str(e),
-                'returncode': p.returncode,
+                'output': "No tests found",
+                'returncode': 0,
             }]
-        raise
+
+        try:
+            with open(result_file, 'r') as f:
+                return json.load(f)
+        except ValueError as e:
+            if str(e) == 'No JSON object could be decoded':
+                return [{
+                    'exception': str(e),
+                    'returncode': p.returncode,
+                }]
+            raise
+
+
+@contextmanager
+def juju_env(env):
+    orig_env = os.environ.get('JUJU_ENV', '')
+    if env != orig_env:
+        log.debug('Updating JUJU_ENV: "%s" -> "%s"', orig_env, env)
+        os.environ['JUJU_ENV'] = env
+    try:
+        yield
+    finally:
+        if env != orig_env:
+            log.debug('Updating JUJU_ENV: "%s" -> "%s"', env, orig_env)
+            os.environ['JUJU_ENV'] = orig_env
 
 
 def get_envs(env_var):
