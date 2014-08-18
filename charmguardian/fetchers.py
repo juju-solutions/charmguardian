@@ -126,7 +126,7 @@ class LocalFetcher(Fetcher):
     def fetch(self, dir_):
         src = os.path.expanduser(self.path)
         dst = os.path.join(dir_, os.path.basename(src.rstrip('/')))
-        shutil.copytree(src, dst)
+        shutil.copytree(src, dst, symlinks=True)
         return dst
 
 

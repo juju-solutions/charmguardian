@@ -112,7 +112,7 @@ class CharmTester(Tester):
         # to avoid charm-proof warnings, dir name must match charm name
         if os.path.basename(self.test_dir.rstrip('/')) != self.charm_name:
             new_test_dir = os.path.join(self.test_dir, self.charm_name)
-            shutil.copytree(self.test_dir, new_test_dir)
+            shutil.copytree(self.test_dir, new_test_dir, symlinks=True)
             self.test_dir = new_test_dir
 
         for env in get_charm_test_envs():
