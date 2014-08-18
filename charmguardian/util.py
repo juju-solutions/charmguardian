@@ -36,22 +36,25 @@ def bundletester(dir_, env, deployment=None, exclude=None,
         )
         output, _ = p.communicate()
 
-        if p.returncode == 3:
-            return [{
-                'output': "No tests found",
-                'returncode': 0,
-            }]
-
-        try:
+        if p.returncode == 0:
             with open(result_file, 'r') as f:
                 return json.load(f)
-        except ValueError as e:
-            if str(e) == 'No JSON object could be decoded':
-                return [{
-                    'exception': str(e),
-                    'returncode': p.returncode,
-                }]
-            raise
+
+        err_result = {
+            "executable": [cmd],
+            "returncode": p.returncode,
+            "duration": 0.0,
+            "suite": "",
+            "test": "",
+            "output": "bundleter failed: {}".format(output or "see stderr"),
+            "dirname": dir_,
+        }
+
+        if p.returncode == 3:
+            err_result['output'] = "No tests found"
+            err_result['returncode'] = 0
+
+        return [err_result]
 
 
 @contextmanager
