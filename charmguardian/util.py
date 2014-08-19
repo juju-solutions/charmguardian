@@ -36,9 +36,11 @@ def bundletester(dir_, env, deployment=None, exclude=None,
         )
         output, _ = p.communicate()
 
-        if p.returncode == 0:
+        try:
             with open(result_file, 'r') as f:
                 return json.load(f)
+        except Exception as e:
+            log.exception(e)
 
         err_result = {
             "executable": [cmd],
