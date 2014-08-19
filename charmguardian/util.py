@@ -5,6 +5,10 @@ import json
 import os
 import shlex
 import subprocess
+import sys
+import tempfile
+import time
+
 
 log = logging.getLogger(__name__)
 
@@ -29,12 +33,21 @@ def bundletester(dir_, env, deployment=None, exclude=None,
         output = ''
 
         log.debug('Running bundletester: %s', cmd)
-        p = subprocess.Popen(
-            args,
-            stdout=None if debug else subprocess.PIPE,
-            stderr=None if debug else subprocess.STDOUT,
-        )
-        output, _ = p.communicate()
+        with tempfile.NamedTemporaryFile() as writer:
+            with open(writer.name, 'rb', 1) as reader:
+                p = subprocess.Popen(
+                    args,
+                    stdout=writer,
+                    stderr=subprocess.STDOUT,
+                )
+                while p.poll() is None:
+                    if debug:
+                        sys.stderr.write(reader.read())
+                    time.sleep(0.5)
+                if debug:
+                    sys.stderr.write(reader.read())
+                reader.seek(0)
+                output = reader.read()
 
         try:
             with open(result_file, 'r') as f:
@@ -48,7 +61,7 @@ def bundletester(dir_, env, deployment=None, exclude=None,
             "duration": 0.0,
             "suite": "",
             "test": "",
-            "output": "bundleter failed: {}".format(output or "see stderr"),
+            "output": "bundletester failed:\n{}".format(output),
             "dirname": dir_,
         }
 
