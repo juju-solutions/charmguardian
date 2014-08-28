@@ -1,4 +1,5 @@
 import logging
+import multiprocessing
 import os
 import random
 import shutil
@@ -42,21 +43,40 @@ class BundleTester(Tester):
             exclude = charm_name
 
         for deployment in self._choose_deployments():
-            bundle_tests[deployment] = deployment_tests = {}
-            for env in get_bundle_test_envs():
-                log.debug(
-                    'Testing deployment %s in env %s', deployment, env)
-                deployment_tests[env] = bundletester(
-                    self.test_dir, env, deployment=deployment,
-                    exclude=exclude, skip_implicit=True)
-                if result == 'pass':
-                    result = get_test_result(deployment_tests[env])
+            envs = get_bundle_test_envs()
+            bundle_tests[deployment] = self._multi_test(
+                envs, deployment, exclude)
+            for env in envs:
+                if result != 'pass':
+                    break
+                result = get_test_result(bundle_tests[deployment][env])
 
         return {
             'type': 'bundle',
             'result': result,
             'tests': bundle_tests,
         }
+
+    def _multi_test(self, envs, deployment, exclude):
+        results = {}
+        pool = multiprocessing.Pool()
+        for env in envs:
+            log.debug(
+                'Testing deployment %s in env %s', deployment, env)
+            results[env] = pool.apply_async(
+                bundletester,
+                (self.test_dir, env),
+                dict(
+                    deployment=deployment,
+                    exclude=exclude,
+                    skip_implicit=True,
+                )
+            )
+
+        for env, result in results.items():
+            results[env] = result.get()
+
+        return results
 
     def _ensure_bzr(self, charmdir):
         if os.path.exists(os.path.join(charmdir, '.bzr')):
@@ -105,6 +125,21 @@ class CharmTester(Tester):
             metadata = yaml.load(f)
             return metadata['name']
 
+    def _multi_test(self, envs):
+        results = {}
+        pool = multiprocessing.Pool()
+        for env in envs:
+            log.debug('Testing Charm %s in env %s', self.charm_name, env)
+            results[env] = pool.apply_async(
+                bundletester,
+                (self.test_dir, env),
+            )
+
+        for env, result in results.items():
+            results[env] = result.get()
+
+        return results
+
     def test(self, shallow=False, workspace=None):
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
@@ -115,11 +150,12 @@ class CharmTester(Tester):
             shutil.copytree(self.test_dir, new_test_dir, symlinks=True)
             self.test_dir = new_test_dir
 
-        for env in get_charm_test_envs():
-            log.debug('Testing Charm %s in env %s', self.charm_name, env)
-            charm_tests[env] = bundletester(self.test_dir, env)
-            if result == 'pass':
-                result = get_test_result(charm_tests[env])
+        envs = get_charm_test_envs()
+        charm_tests = self._multi_test(envs)
+        for env in envs:
+            if result != 'pass':
+                break
+            result = get_test_result(charm_tests[env])
 
         if not shallow:
             for bundle in self.bundles():

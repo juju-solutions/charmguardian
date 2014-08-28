@@ -16,6 +16,7 @@ class BundleTesterTest(unittest.TestCase):
     @mock.patch('charmguardian.testers.bundletester')
     def test_test(self, bundletester):
         bundletester.return_value = {}
+        bundletester.__class__ = mock.MagicMock
 
         tempdir = tempfile.mkdtemp()
         self.addCleanup(lambda: shutil.rmtree(tempdir))
@@ -41,6 +42,7 @@ class CharmTesterTest(unittest.TestCase):
     @mock.patch('charmguardian.testers.bundletester')
     def test_test(self, bundletester):
         bundletester.return_value = {}
+        bundletester.__class__ = mock.MagicMock
 
         tempdir = tempfile.mkdtemp()
         self.addCleanup(lambda: shutil.rmtree(tempdir))
