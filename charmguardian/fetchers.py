@@ -12,6 +12,15 @@ from charmworldlib.bundle import Bundle
 
 log = logging.getLogger(__name__)
 
+REQUEST_TIMEOUT_SECS = 45
+
+
+def get(*args, **kw):
+    if 'timeout' not in kw:
+        kw['timeout'] = REQUEST_TIMEOUT_SECS
+
+    return requests.get(*args, **kw)
+
 
 class Fetcher(object):
     def __init__(self, url, revision, **kw):
@@ -69,7 +78,7 @@ class BzrMergeProposalFetcher(BzrFetcher):
         dir_ = tempfile.mkdtemp(dir=dir_)
         api_base = 'https://api.launchpad.net/devel/'
         url = api_base + self.repo
-        merge_data = requests.get(url).json()
+        merge_data = get(url).json()
         target = 'lp:' + merge_data['target_branch_link'][len(api_base):]
         source = 'lp:' + merge_data['source_branch_link'][len(api_base):]
         bzr('branch --use-existing-dir {} {}'.format(target, dir_))
@@ -144,7 +153,7 @@ class StoreCharm(object):
             'stats': 0,
             'charms': self.name,
         }
-        r = requests.get(self.STORE_URL, params=params).json()
+        r = get(self.STORE_URL, params=params).json()
         charm_data = r[self.name]
         if 'errors' in charm_data:
             raise ValueError(
@@ -191,7 +200,7 @@ class CharmstoreDownloader(Fetcher):
     def download_file(self, url, dir_):
         _, filename = tempfile.mkstemp(dir=dir_)
         log.debug("Downloading %s", url)
-        r = requests.get(url, stream=True)
+        r = get(url, stream=True)
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
@@ -217,7 +226,7 @@ class BundleDownloader(Fetcher):
         bundle_dir = tempfile.mkdtemp(dir=dir_)
         bundle_file = os.path.join(bundle_dir, 'bundles.yaml')
         log.debug("Downloading %s to %s", url, bundle_file)
-        r = requests.get(url, stream=True)
+        r = get(url, stream=True)
         with open(bundle_file, 'w') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
