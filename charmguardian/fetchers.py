@@ -8,7 +8,6 @@ import tempfile
 
 import requests
 
-from charmworldlib.charm import Charm
 from charmworldlib.bundle import Bundle
 
 log = logging.getLogger(__name__)
@@ -130,6 +129,31 @@ class LocalFetcher(Fetcher):
         return dst
 
 
+class StoreCharm(object):
+    STORE_URL = 'https://store.juju.ubuntu.com/charm-info'
+
+    def __init__(self, name):
+        self.name = name
+        self.data = self.fetch()
+
+    def __getattr__(self, key):
+        return self.data[key]
+
+    def fetch(self):
+        params = {
+            'stats': 0,
+            'charms': self.name,
+        }
+        r = requests.get(self.STORE_URL, params=params).json()
+        charm_data = r[self.name]
+        if 'errors' in charm_data:
+            raise ValueError(
+                'Error retrieving "{}" from charm store: {}'.format(
+                    self.name, '; '.join(charm_data['errors']))
+            )
+        return charm_data
+
+
 class CharmstoreDownloader(Fetcher):
     MATCH = re.compile(r"""
     ^cs:(?P<charm>.*)$
@@ -137,8 +161,12 @@ class CharmstoreDownloader(Fetcher):
 
     STORE_URL = 'https://store.juju.ubuntu.com/charm/'
 
+    def __init__(self, *args, **kw):
+        super(CharmstoreDownloader, self).__init__(*args, **kw)
+        self.charm = StoreCharm(self.charm)
+
     def fetch(self, dir_):
-        url = Charm(self.charm).url[len('cs:'):]
+        url = self.charm.data['canonical-url'][len('cs:'):]
         url = self.STORE_URL + url
         archive = self.download_file(url, dir_)
         charm_dir = self.extract_archive(archive, dir_)
@@ -172,7 +200,7 @@ class CharmstoreDownloader(Fetcher):
         return filename
 
     def get_revision(self, dir_):
-        return Charm(self.charm).id.split('-')[-1]
+        return self.charm.revision
 
 
 class BundleDownloader(Fetcher):
