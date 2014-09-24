@@ -2,8 +2,8 @@ PyYAML==3.10
 git+git://github.com/marcoceppi/amulet.git@d7629428bb2e3b43eb0e53a8aea27af770cf9c43#egg=amulet
 argparse==1.2.1
 blessings==1.5.1
+bundletester==0.3.7
 bzr==2.6.0
-bzr+http://code.launchpad.net/~tvansteenburgh/charmtester/bundletester#egg=bundletester
 charm-tools==1.3.2
 charmworldlib==0.4.1
 coverage==3.7.1

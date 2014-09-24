@@ -122,6 +122,8 @@ def main():
         )
         result = fmt(args.url, result)
         print(json.dumps(result, indent=4))
+        sys.stderr.write(
+            '\nTest result: {}\n'.format(result['result'].upper()))
     except Exception as e:
         sys.stderr.write('{}\n'.format(e))
         sys.exit(1)
