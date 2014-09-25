@@ -5,7 +5,7 @@ all: lint test
 clean:
 	rm -rf MANIFEST dist/* $(PROJECT).egg-inf .cover
 	find . -name '*.pyc' -delete
-	rm -rf .venv
+	rm -rf .venv*
 	rm -rf .cover
 
 test: .venv
