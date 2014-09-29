@@ -2,13 +2,13 @@ PyYAML==3.10
 amulet==1.7.0
 argparse==1.2.1
 blessings==1.5.1
-bundletester==0.3.7
+bundletester==0.3.8
 bzr==2.6.0
 charm-tools==1.3.2
 charmworldlib==0.4.1
 coverage==3.7.1
 flake8==2.2.2
-juju-deployer==0.3.8
+juju-deployer==0.4.3
 mercurial==3.0.1
 mock==1.0.1
 nose==1.3.1

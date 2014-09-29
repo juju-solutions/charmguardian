@@ -35,6 +35,8 @@ def bundletester(dir_, env, deployment=None, exclude=None,
             cmd = '{} -x {}'.format(cmd, exclude)
         if skip_implicit:
             cmd = '{} -s'.format(cmd)
+        if log_level == 'DEBUG':
+            cmd = '{} -v'.format(cmd)
         args = shlex.split(cmd)
         output = ''
 
