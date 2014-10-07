@@ -24,7 +24,8 @@ def bundletester(dir_, env, deployment=None, exclude=None,
     with juju_env(env):
         debug = log.getEffectiveLevel() == logging.DEBUG
 
-        result_file = os.path.join(dir_, 'result.json')
+        _, result_file = tempfile.mkstemp(
+            prefix='result-', suffix='.json', dir=dir_)
         log_level = 'DEBUG' if debug else 'ERROR'
 
         cmd = 'bundletester -F -r json -t {} -e {} -o {} -l {}'.format(
