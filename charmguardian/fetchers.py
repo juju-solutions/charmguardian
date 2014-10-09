@@ -192,10 +192,7 @@ class CharmstoreDownloader(Fetcher):
         # Instead we use a shell equivalent of the following:
         #     archive = zipfile.ZipFile(archive, 'r')
         #     archive.extractall(tempdir)
-        check_call(
-            'unzip {} -d {}'.format(archive, tempdir),
-            stdout=subprocess.PIPE,
-        )
+        check_call('unzip {} -d {}'.format(archive, tempdir))
         return tempdir
 
     def download_file(self, url, dir_):
