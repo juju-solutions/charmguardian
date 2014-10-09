@@ -252,16 +252,26 @@ def hg(cmd, **kw):
 
 
 def check_call(cmd, **kw):
-    log.debug(cmd)
-    args = shlex.split(cmd)
-    subprocess.check_call(args, **kw)
+    return check_output(cmd, **kw)
+
+
+class FetchError(Exception):
+    pass
 
 
 def check_output(cmd, **kw):
     args = shlex.split(cmd)
-    output = subprocess.check_output(args, **kw).strip()
-    log.debug('%s: %s', cmd, output)
-    return output
+    p = subprocess.Popen(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        **kw
+    )
+    out, _ = p.communicate()
+    if p.returncode != 0:
+        raise FetchError(out)
+    log.debug('%s: %s', cmd, out)
+    return out
 
 
 FETCHERS = [

@@ -9,7 +9,10 @@ import yaml
 from amulet.helpers import setup_bzr, run_bzr
 from charmworldlib.bundle import Bundles
 
-from .fetchers import get_fetcher
+from .fetchers import (
+    get_fetcher,
+    FetchError,
+)
 from .util import (
     bundletester,
     get_charm_test_envs,
@@ -206,7 +209,14 @@ def test(url, revision=None, shallow=False, workspace=None, **kw):
     try:
         tempdir = workspace or tempfile.mkdtemp()
         fetcher = get_fetcher(url, revision)
-        test_dir = fetcher.fetch(tempdir)
+        try:
+            test_dir = fetcher.fetch(tempdir)
+        except FetchError as e:
+            return {
+                'type': 'error',
+                'error': str(e),
+                'result': 'fail',
+            }
         tester = get_tester(test_dir)
 
         start = timestamp()
