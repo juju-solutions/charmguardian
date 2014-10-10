@@ -17,19 +17,19 @@ for that charm.
 Filtering Results
 =================
 
-Each test result contains a number of fields against which we can apply filters.
-An example test result:
+Each test result contains a number of fields against which we can apply
+filters.  An example test result:
 
     {
-        executable: [
+      executable: [
         "/var/lib/jenkins/charmguardian/.venv/bin/charm-proof"
-        ],
-        returncode: 0,
-        duration: 0.690053,
-        suite: "apache2",
-        test: "charm-proof",
-        output: "I: relation logging has no hooks ",
-        dirname: "/var/lib/jenkins/workspace/charm-bundle-test/tmpF8jImE/apache2"
+      ],
+      returncode: 0,
+      duration: 0.690053,
+      suite: "apache2",
+      test: "charm-proof",
+      output: "I: relation logging has no hooks ",
+      dirname: "/var/lib/jenkins/workspace/charm-bundle-test/tmpF8jImE/apache2"
     }
 
 To filter, run with a yaml file containing the desired filtering expressions.
@@ -42,20 +42,20 @@ An example yaml file:
 
 A filter is named to match the test result field to which it is applied.
 String filters are evaluated by python and are supplied a `content` variable
-containing the value from the test result. Python's `re` module is also available
-in the global namespace in which the expression will be evaulated.
+containing the value from the test result. Python's `re` module is also
+available in the global namespace in which the expression will be evaulated.
 
-The filtering expressions are ANDed together, therefore all expressions must evaulate
-true for the test result to match the filter.
+The filtering expressions are ANDed together, therefore all expressions must
+evaulate true for the test result to match the filter.
 
 The value of the filter can be alternatively be an int or boolean.
 
     - int:  return (test result value == filter value)
     - bool: return the value of the expression
 
-The default filtering mode will return a test result if *any* of its tests match the
-filter. To return a result only if *all* tests match the filter, pass the `--all`
-option.
+The default filtering mode will return a test result if *any* of its tests
+match the filter. To return a result only if *all* tests match the filter,
+pass the `--all` option.
 
 """
 import argparse
@@ -201,10 +201,12 @@ def report(args):
 
     if args.test_result_url:
         if args.test_result_url not in cached_results:
-            sys.stderr.write('No test results found for ' + args.test_result_url)
+            sys.stderr.write(
+                'No test results found for ' + args.test_result_url)
             sys.exit(1)
         else:
-            print json.dumps(cached_results[args.test_result_url].results, indent=2)
+            print json.dumps(
+                cached_results[args.test_result_url].results, indent=2)
             sys.exit(0)
 
     if not args.filter:
