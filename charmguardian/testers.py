@@ -217,6 +217,7 @@ def test(url, revision=None, shallow=False, workspace=None, **kw):
                 'error': str(e),
                 'result': 'fail',
                 'url': url,
+                'finished': timestamp(),
             }
         tester = get_tester(test_dir)
 
