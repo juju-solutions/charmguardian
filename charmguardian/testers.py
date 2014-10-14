@@ -216,6 +216,7 @@ def test(url, revision=None, shallow=False, workspace=None, **kw):
                 'type': 'error',
                 'error': str(e),
                 'result': 'fail',
+                'url': url,
             }
         tester = get_tester(test_dir)
 
