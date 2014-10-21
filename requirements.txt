@@ -3,7 +3,7 @@ amulet==1.7.0
 argparse==1.2.1
 BeautifulSoup
 blessings==1.5.1
-bundletester==0.4.0
+bundletester==0.4.1
 bzr==2.6.0
 charm-tools==1.3.2
 charmworldlib==0.4.1
