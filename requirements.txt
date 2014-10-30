@@ -3,7 +3,7 @@ amulet==1.8.1
 argparse==1.2.1
 BeautifulSoup
 blessings==1.5.1
-bundletester==0.4.1
+bundletester==0.4.2
 bzr==2.6.0
 charm-tools==1.4.0
 charmworldlib==0.4.1
@@ -14,4 +14,5 @@ mercurial==3.0.1
 mock==1.0.1
 nose==1.3.1
 requests==2.4.1
+websocket-client==0.18.0
 wsgiref==0.1.2
