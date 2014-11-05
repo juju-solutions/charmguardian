@@ -1,2 +1,0 @@
-amulet==1.8.1
-requests==2.4.1

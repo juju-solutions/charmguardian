@@ -2,11 +2,7 @@
 
 set -ex
 
-for pkg in python-virtualenv python-dev git unzip ; do
-  if ! dpkg -s $pkg ; then
-      sudo apt-get install -y $pkg
-  fi
-done
+sudo apt-get install -y python-virtualenv python-dev git unzip amulet
 
 if [ ! -d .venv ]; then
   virtualenv -p /usr/bin/python2.7 .venv
@@ -15,15 +11,4 @@ if [ ! -d .venv ]; then
     --allow-external lazr.authentication \
     --allow-unverified lazr.authentication
   python setup.py develop
-fi
-
-if [ ! -d .venv3 ]; then
-  virtualenv -p /usr/bin/python3 .venv3
-  . .venv3/bin/activate
-  pip install -r requirements3.txt
-fi
-
-if [ ! -h .venv/bin/python3 ]; then
-  cd .venv/bin
-  ln -s ../../.venv3/bin/python3 python3
 fi
