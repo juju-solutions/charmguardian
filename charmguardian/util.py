@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 def bundletester(dir_, env, deployment=None, exclude=None,
-                 skip_implicit=False):
+                 skip_implicit=False, constraints=None):
     proc_cwd = os.path.join(dir_, '.deployer-branches', env)
     try:
         os.makedirs(proc_cwd)
@@ -38,6 +38,8 @@ def bundletester(dir_, env, deployment=None, exclude=None,
             cmd = '{} -s'.format(cmd)
         if log_level == 'DEBUG':
             cmd = '{} -v'.format(cmd)
+        if constraints:
+            cmd = '{} --constraints "{}"'.format(cmd, constraints)
         args = shlex.split(cmd)
         output = ''
 

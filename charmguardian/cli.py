@@ -86,6 +86,10 @@ def get_parser():
         help='Revision to test. Defaults to HEAD of branch implied by URL.',
     )
     parser.add_argument(
+        '--constraints',
+        help='Passed to `juju bootstrap`',
+    )
+    parser.add_argument(
         '--debug', action='store_true',
         help='Increase output verbosity and skip cleanup of temp files.',
     )
@@ -119,6 +123,7 @@ def main():
             revision=args.revision,
             shallow=args.shallow,
             workspace=args.workspace,
+            constraints=args.constraints,
         )
         result = fmt(args.url, result)
         print(json.dumps(result, indent=4))

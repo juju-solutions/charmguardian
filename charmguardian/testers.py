@@ -34,8 +34,8 @@ class BundleTester(Tester):
     def can_test(dir_):
         return 'bundles.yaml' in os.listdir(dir_)
 
-    def test(self, shallow=False, workspace=None, charm_name=None,
-             charmdir=None):
+    def test(self, shallow=False, workspace=None, constraints=None,
+             charm_name=None, charmdir=None):
         bundle_tests = {}
         result = 'pass'
         exclude = None
@@ -48,7 +48,7 @@ class BundleTester(Tester):
         for deployment in self._choose_deployments():
             envs = get_bundle_test_envs()
             bundle_tests[deployment] = self._multi_test(
-                envs, deployment, exclude)
+                envs, deployment, exclude, constraints)
             for env in envs:
                 if result != 'pass':
                     break
@@ -60,7 +60,7 @@ class BundleTester(Tester):
             'tests': bundle_tests,
         }
 
-    def _multi_test(self, envs, deployment, exclude):
+    def _multi_test(self, envs, deployment, exclude, constraints):
         results = {}
         pool = multiprocessing.Pool()
         for env in envs:
@@ -73,6 +73,7 @@ class BundleTester(Tester):
                     deployment=deployment,
                     exclude=exclude,
                     skip_implicit=True,
+                    constraints=constraints,
                 )
             )
 
@@ -128,7 +129,7 @@ class CharmTester(Tester):
             metadata = yaml.load(f)
             return metadata['name']
 
-    def _multi_test(self, envs):
+    def _multi_test(self, envs, constraints):
         results = {}
         pool = multiprocessing.Pool()
         for env in envs:
@@ -136,6 +137,9 @@ class CharmTester(Tester):
             results[env] = pool.apply_async(
                 bundletester,
                 (self.test_dir, env),
+                dict(
+                    constraints=constraints,
+                )
             )
 
         for env, result in results.items():
@@ -143,7 +147,7 @@ class CharmTester(Tester):
 
         return results
 
-    def test(self, shallow=False, workspace=None):
+    def test(self, shallow=False, workspace=None, constraints=None):
         charm_tests, bundle_tests = {}, {}
         result = 'pass'
 
@@ -154,7 +158,7 @@ class CharmTester(Tester):
             self.test_dir = new_test_dir
 
         envs = get_charm_test_envs()
-        charm_tests = self._multi_test(envs)
+        charm_tests = self._multi_test(envs, constraints)
         for env in envs:
             if result != 'pass':
                 break
@@ -166,6 +170,7 @@ class CharmTester(Tester):
                 bundle_tests[bundle.id] = test(
                     'lp:' + bundle.branch_spec,
                     workspace=workspace,
+                    constraints=constraints,
                     charm_name=self.charm_name,
                     charmdir=self.test_dir)
                 if result == 'pass':
@@ -204,7 +209,8 @@ def get_tester(test_dir):
     raise ValueError('No tester for dir: %s' % test_dir)
 
 
-def test(url, revision=None, shallow=False, workspace=None, **kw):
+def test(url, revision=None, shallow=False, workspace=None,
+         constraints=None, **kw):
     tempdir = None
     try:
         tempdir = workspace or tempfile.mkdtemp()
@@ -222,7 +228,12 @@ def test(url, revision=None, shallow=False, workspace=None, **kw):
         tester = get_tester(test_dir)
 
         start = timestamp()
-        result = tester.test(shallow=shallow, workspace=workspace, **kw)
+        result = tester.test(
+            shallow=shallow,
+            workspace=workspace,
+            constraints=constraints,
+            **kw
+        )
         stop = timestamp()
 
         result['url'] = url

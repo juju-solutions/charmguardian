@@ -3,13 +3,13 @@ amulet==1.8.1
 argparse==1.2.1
 BeautifulSoup
 blessings==1.5.1
-bundletester==0.4.3
+git+https://github.com/juju-solutions/bundletester.git@bootstrap-constraints#egg=bundletester
 bzr==2.6.0
-charm-tools==1.4.0
+charm-tools==1.4.1
 charmworldlib==0.4.1
 coverage==3.7.1
 flake8==2.2.2
-bzr+http://code.launchpad.net/~tvansteenburgh/juju-deployer/force-terminate-machines#egg=juju-deployer
+bzr+http://code.launchpad.net/~tvansteenburgh/juju-deployer/bootstrap-constraints#egg=juju-deployer
 mercurial==3.0.1
 mock==1.0.1
 nose==1.3.1
