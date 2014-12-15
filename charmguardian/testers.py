@@ -1,8 +1,10 @@
+from contextlib import contextmanager
 import logging
 import multiprocessing
 import os
 import random
 import shutil
+import signal
 import tempfile
 import yaml
 
@@ -22,6 +24,33 @@ from .util import (
 )
 
 log = logging.getLogger(__name__)
+
+
+def init_worker():
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+@contextmanager
+def signal_handlers(pool):
+    def install_handler(signum):
+        cur_handler = signal.getsignal(signum)
+
+        def handler(signum, frame):
+            pool.terminate()
+            pool.join()
+            if callable(cur_handler):
+                cur_handler(signum, frame)
+        signal.signal(signum, handler)
+        return cur_handler
+
+    prev_sigint_handler = install_handler(signal.SIGINT)
+    prev_sigterm_handler = install_handler(signal.SIGTERM)
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGINT, prev_sigint_handler)
+        signal.signal(signal.SIGTERM, prev_sigterm_handler)
 
 
 class Tester(object):
@@ -62,23 +91,24 @@ class BundleTester(Tester):
 
     def _multi_test(self, envs, deployment, exclude, constraints):
         results = {}
-        pool = multiprocessing.Pool()
-        for env in envs:
-            log.debug(
-                'Testing deployment %s in env %s', deployment, env)
-            results[env] = pool.apply_async(
-                bundletester,
-                (self.test_dir, env),
-                dict(
-                    deployment=deployment,
-                    exclude=exclude,
-                    skip_implicit=True,
-                    constraints=constraints,
+        pool = multiprocessing.Pool(None, init_worker)
+        with signal_handlers(pool):
+            for env in envs:
+                log.debug(
+                    'Testing deployment %s in env %s', deployment, env)
+                results[env] = pool.apply_async(
+                    bundletester,
+                    (self.test_dir, env),
+                    dict(
+                        deployment=deployment,
+                        exclude=exclude,
+                        skip_implicit=True,
+                        constraints=constraints,
+                    )
                 )
-            )
 
-        for env, result in results.items():
-            results[env] = result.get()
+            for env, result in results.items():
+                results[env] = result.get()
 
         return results
 
@@ -131,19 +161,20 @@ class CharmTester(Tester):
 
     def _multi_test(self, envs, constraints):
         results = {}
-        pool = multiprocessing.Pool()
-        for env in envs:
-            log.debug('Testing Charm %s in env %s', self.charm_name, env)
-            results[env] = pool.apply_async(
-                bundletester,
-                (self.test_dir, env),
-                dict(
-                    constraints=constraints,
+        pool = multiprocessing.Pool(None, init_worker)
+        with signal_handlers(pool):
+            for env in envs:
+                log.debug('Testing Charm %s in env %s', self.charm_name, env)
+                results[env] = pool.apply_async(
+                    bundletester,
+                    (self.test_dir, env),
+                    dict(
+                        constraints=constraints,
+                    )
                 )
-            )
 
-        for env, result in results.items():
-            results[env] = result.get()
+            for env, result in results.items():
+                results[env] = result.get()
 
         return results
 

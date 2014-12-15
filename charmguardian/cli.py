@@ -52,10 +52,12 @@ import argparse
 import json
 import logging
 import os
+import signal
 import sys
 
-from .testers import test
 from .formatters import fmt
+from .testers import test
+from .util import timestamp
 
 
 class validate_dir(argparse.Action):
@@ -108,6 +110,29 @@ def get_parser():
     return parser
 
 
+def install_signal_handlers(url):
+    def handler(signum, frame):
+        result = {
+            'type': 'error',
+            'error': 'Process forcefully terminated',
+            'result': 'fail',
+            'url': url,
+            'finished': timestamp(),
+        }
+        print(json.dumps(result, indent=4))
+        sys.stderr.write(
+            '\nTest result: {}\n'.format(result['result'].upper()))
+        sys.exit(1)
+
+    signal.signal(signal.SIGTERM, handler)
+    signal.signal(signal.SIGINT, handler)
+
+
+def uninstall_signal_handlers():
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+
 def main():
     parser = get_parser()
     args = parser.parse_args()
@@ -118,6 +143,7 @@ def main():
     )
 
     try:
+        install_signal_handlers(args.url)
         result = test(
             args.url,
             revision=args.revision,
@@ -129,6 +155,7 @@ def main():
         print(json.dumps(result, indent=4))
         sys.stderr.write(
             '\nTest result: {}\n'.format(result['result'].upper()))
+        uninstall_signal_handlers()
     except Exception as e:
         sys.stderr.write('{}\n'.format(e))
         sys.exit(1)
