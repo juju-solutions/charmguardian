@@ -3,7 +3,7 @@ amulet==1.8.1
 argparse==1.2.1
 BeautifulSoup
 blessings==1.5.1
-git+https://github.com/juju-solutions/bundletester.git@bootstrap-constraints#egg=bundletester
+git+https://github.com/juju-solutions/bundletester.git#egg=bundletester
 bzr==2.6.0
 charm-tools==1.4.1
 charmworldlib==0.4.1
